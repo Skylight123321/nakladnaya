@@ -14,7 +14,7 @@
     :root { --bg:#f6f7f9; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#111827; --danger:#b91c1c; }
     *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;color:var(--text)}
     .app{max-width:760px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 28px)}
-    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.title{font-size:28px;font-weight:800;letter-spacing:-.02em}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.title{font-size:28px;font-weight:800;letter-spacing:-.02em}.sub{font-size:13px;color:var(--muted);margin-top:3px}.shop-info{text-align:center;color:var(--muted);font-size:11px;line-height:1.45;margin-top:10px;padding-bottom:2px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 2px 12px rgba(15,23,42,.04)}
     .row{display:grid;grid-template-columns:1.3fr .7fr .9fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)} .row:last-child{border-bottom:0}
     input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;outline:none} input:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}
@@ -27,7 +27,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="top"><div><div class="title">Накладная</div><div class="sub">Количество × цена = сумма</div></div></div>
+    <div class="top"><div><div class="title">Накладная</div><div class="sub" id="currentDate"></div></div></div>
     <section class="card">
       <div class="headers"><div>Товар</div><div>Кол-во</div><div>Цена</div><div></div></div>
       <div id="items"></div>
@@ -40,13 +40,14 @@
       <div><div class="total-label">Итого</div><div class="total-value" id="grandTotal">0,00</div></div>
       <div class="count" id="countText">0 позиций</div>
     </section>
+    <div class="shop-info">Jaan<br>пав.609, 12 ряд</div>
   </main>
 <script>
 const STORAGE_KEY='invoice-calc-items-v1';
 let items=[];
-const elItems=document.getElementById('items'), elTotal=document.getElementById('grandTotal'), elCount=document.getElementById('countText');
+const elItems=document.getElementById('items'), elTotal=document.getElementById('grandTotal'), elCount=document.getElementById('countText'), elDate=document.getElementById('currentDate');
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function load(){try{items=JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch{items=[]} if(!items.length) items=[{id:uid(),name:'',qty:1,price:''}]}
+function load(){try{items=JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch{items=[]} if(!items.length) items=[{id:uid(),name:'',qty:'',price:''}]; items=items.map(i=>(!i.name && !i.price && (i.qty===1 || i.qty==='1'))?{...i,qty:''}:i)}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(items))}
 function money(n){return new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0)}
 function plural(n){const a=n%10,b=n%100; if(a===1&&b!==11)return 'позиция'; if(a>=2&&a<=4&&(b<10||b>=20))return 'позиции'; return 'позиций'}
@@ -56,7 +57,7 @@ function render(){
   items.forEach(item=>{
     const row=document.createElement('div'); row.className='row'; row.dataset.id=item.id;
     row.innerHTML=`<input class="name" placeholder="Название" value="${escapeHtml(item.name)}" />
-      <input class="qty" inputmode="decimal" type="text" placeholder="1" value="${item.qty}" />
+      <input class="qty" inputmode="decimal" type="text" placeholder="Количество" value="${item.qty}" />
       <input class="price" inputmode="decimal" type="text" placeholder="0,00" value="${item.price}" />
       <button class="del" aria-label="Удалить">×</button>
       <div class="sum">Сумма: ${money(parseNum(item.qty)*parseNum(item.price))}</div>`;
@@ -67,9 +68,11 @@ function render(){
 function escapeHtml(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function updateTotal(){const t=items.reduce((a,i)=>a+parseNum(i.qty)*parseNum(i.price),0);elTotal.textContent=money(t);elCount.textContent=`${items.length} ${plural(items.length)}`}
 elItems.addEventListener('input',e=>{const row=e.target.closest('.row'); if(!row)return; const item=items.find(i=>i.id===row.dataset.id); if(!item)return; if(e.target.classList.contains('name'))item.name=e.target.value; if(e.target.classList.contains('qty'))item.qty=e.target.value; if(e.target.classList.contains('price'))item.price=e.target.value; row.querySelector('.sum').textContent='Сумма: '+money(parseNum(item.qty)*parseNum(item.price)); updateTotal(); save();});
-elItems.addEventListener('click',e=>{if(!e.target.classList.contains('del'))return; const id=e.target.closest('.row').dataset.id; items=items.filter(i=>i.id!==id); if(!items.length)items=[{id:uid(),name:'',qty:1,price:''}]; render();});
-document.getElementById('addBtn').addEventListener('click',()=>{items.push({id:uid(),name:'',qty:1,price:''});render(); setTimeout(()=>elItems.lastElementChild?.querySelector('.name')?.focus(),0)});
-document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Очистить все позиции?')){items=[{id:uid(),name:'',qty:1,price:''}];render()}});
+elItems.addEventListener('click',e=>{if(!e.target.classList.contains('del'))return; const id=e.target.closest('.row').dataset.id; items=items.filter(i=>i.id!==id); if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}]; render();});
+document.getElementById('addBtn').addEventListener('click',()=>{items.push({id:uid(),name:'',qty:'',price:''});render(); setTimeout(()=>elItems.lastElementChild?.querySelector('.name')?.focus(),0)});
+document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Очистить все позиции?')){items=[{id:uid(),name:'',qty:'',price:''}];render()}});
+function updateDate(){const d=new Date(); elDate.textContent=d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});}
+updateDate();
 load(); render();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
