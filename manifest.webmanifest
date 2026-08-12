@@ -1,0 +1,12 @@
+{
+  "name": "Накладная — калькулятор",
+  "short_name": "Накладная",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#0f172a",
+  "description": "Калькулятор позиций: количество × цена и общий итог.",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
