@@ -27,31 +27,18 @@
     .search-wrap{margin-bottom:12px}.search-wrap input{background:#fff}.comment-area{width:100%;min-height:130px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:16px;outline:none}.comment-area:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}.comment-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-value{font-size:22px;font-weight:800;margin-top:6px}.stat-count{font-size:12px;color:var(--muted);margin-top:4px}.history-comment{font-size:12px;color:#4b5563;margin-top:7px;line-height:1.35}.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}.modal.show{display:flex}.sheet{background:#f6f7f9;width:min(760px,100%);max-height:88vh;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 18px);overflow:auto}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.sheet-title{font-size:22px;font-weight:800}.close{background:#e5e7eb;padding:8px 12px}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}.history-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-name{font-weight:800;font-size:16px}.history-meta{font-size:12px;color:var(--muted);margin-top:3px}.history-total{font-weight:800;white-space:nowrap}.history-buttons{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:11px}.history-buttons button{padding:10px;font-size:13px}.danger{color:var(--danger);background:#fff;border:1px solid #fecaca}.no-history{text-align:center;color:var(--muted);padding:28px 10px}
     .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     @media(max-width:560px){.stats-grid{grid-template-columns:1fr}.customer-line{grid-template-columns:1fr auto}.headers{display:none}.row{grid-template-columns:1fr 74px 104px 38px}.title{font-size:25px}.card{padding:10px}.sum{grid-column:1/4;text-align:left;color:var(--muted);font-size:14px;padding-left:2px}.del{grid-column:4;grid-row:1/3}.actions{grid-template-columns:1fr}.total-value{font-size:27px}.history-buttons{grid-template-columns:1fr 1fr auto}}
-  </style>
+  
+    .print-choice{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:flex-end;justify-content:center}
+    .print-choice.show{display:flex}
+    .print-sheet{width:min(620px,100%);background:#f6f7f9;border-radius:22px 22px 0 0;padding:16px 14px calc(env(safe-area-inset-bottom) + 18px)}
+    .print-sheet h3{margin:2px 2px 14px;font-size:22px}
+    .print-paper-row,.print-action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .print-paper-row button{background:#fff;border:1px solid var(--line)}
+    .print-paper-row button.active{background:#111827;color:#fff;border-color:#111827}
+    .print-server{margin:12px 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+    .print-cancel{width:100%;margin-top:10px;background:#e5e7eb;color:#111827}
 
-<style id="jaan-print-settings-style">
-.jaan-print-modal-backdrop{
-  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;
-  display:flex;align-items:flex-end;justify-content:center;padding:16px;
-}
-.jaan-print-modal{
-  width:min(560px,100%);background:#fff;color:#111827;border-radius:24px;
-  padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:inherit;
-}
-.jaan-print-modal h3{margin:2px 0 14px;font-size:20px}
-.jaan-print-modal .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.jaan-print-modal button{
-  border:0;border-radius:16px;padding:14px 16px;font:inherit;font-weight:700;
-  background:#eef1f5;color:#111827
-}
-.jaan-print-modal button.primary{background:#111827;color:#fff}
-.jaan-print-modal button.active{outline:3px solid #111827}
-.jaan-print-modal .serverbox{
-  background:#f4f5f7;border-radius:14px;padding:12px;margin:8px 0 12px;
-  font-size:13px;overflow-wrap:anywhere;color:#4b5563
-}
-.jaan-print-modal .cancel{width:100%;margin-top:4px}
-</style>
+  </style>
 
 </head>
 <body>
@@ -81,13 +68,29 @@
   <div class="modal" id="historyModal" aria-hidden="true"><div class="sheet"><div class="sheet-head"><div class="sheet-title">История накладных</div><button class="close" id="closeHistory">Закрыть</button></div><div class="search-wrap"><input id="historySearch" placeholder="Поиск по имени, дате, товару или комментарию" autocomplete="off" /></div><div class="history-list" id="historyList"></div></div></div>
   <div class="modal" id="commentModal" aria-hidden="true"><div class="sheet"><div class="sheet-head"><div class="sheet-title">Комментарий</div><button class="close" id="closeComment">Закрыть</button></div><textarea class="comment-area" id="commentText" placeholder="Например: оплатит завтра, скидка, заберёт вечером…"></textarea><div class="comment-actions"><button class="secondary" id="clearComment">Очистить</button><button class="primary" id="saveComment">Готово</button></div></div></div>
   <div class="modal" id="statsModal" aria-hidden="true"><div class="sheet"><div class="sheet-head"><div class="sheet-title">Статистика</div><button class="close" id="closeStats">Закрыть</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Сегодня</div><div class="stat-value" id="statToday">0,00</div><div class="stat-count" id="statTodayCount">0 накладных</div></div><div class="stat-card"><div class="stat-label">7 дней</div><div class="stat-value" id="statWeek">0,00</div><div class="stat-count" id="statWeekCount">0 накладных</div></div><div class="stat-card"><div class="stat-label">Этот месяц</div><div class="stat-value" id="statMonth">0,00</div><div class="stat-count" id="statMonthCount">0 накладных</div></div></div></div></div>
+
+  <div class="print-choice" id="printChoice" aria-hidden="true">
+    <div class="print-sheet">
+      <h3>Печать накладной</h3>
+      <div class="print-paper-row">
+        <button type="button" id="paperA5">A5</button>
+        <button type="button" id="paperA4">A4</button>
+      </div>
+      <div class="print-server">Сервер: <span id="printServerText"></span></div>
+      <div class="print-action-row">
+        <button type="button" class="secondary" id="changePrintServer">Изменить IP / адрес</button>
+        <button type="button" class="primary" id="confirmPrint">Распечатать</button>
+      </div>
+      <button type="button" class="print-cancel" id="cancelPrint">Отмена</button>
+    </div>
+  </div>
   <div class="toast" id="toast"></div>
 <script>
 const STORAGE_KEY='invoice-calc-items-v1';
 const NAME_KEY='invoice-calc-customer-v1';
 const HISTORY_KEY='invoice-calc-history-v1';
 const COMMENT_KEY='invoice-calc-comment-v1';
-const PRINT_SERVER_KEY='jaan-print-server-url-v3';
+const PRINT_SERVER_KEY='jaan-print-server-url-v4';
 const DEFAULT_PRINT_SERVER='http://jaan-print.local:8765';
 const PRINT_PAPER_KEY='jaan-print-paper-v1';
 let items=[];
@@ -146,50 +149,94 @@ function normalizePrintServer(raw){
   if(v && !/^https?:\/\//i.test(v))v='http://'+v;
   return v;
 }
-async function sendToPrintServer(inv){
-  let base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||'');
-  if(!base){
-    const entered=prompt('Адрес Jaan Print Server. Обычно менять не нужно:', DEFAULT_PRINT_SERVER);
-    if(!entered)return false;
-    base=normalizePrintServer(entered);
-    localStorage.setItem(PRINT_SERVER_KEY,base);
-  }
+async function sendToPrintServer(inv,paper){
+  let base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
+  if(!base)base=DEFAULT_PRINT_SERVER;
+  localStorage.setItem(PRINT_SERVER_KEY,base);
 
-  // GitHub Pages = HTTPS, а локальный сервер ПК = HTTP.
-  // Safari может блокировать обычный fetch как mixed content.
-  // Поэтому в этом случае используем переход верхнего уровня в новое окно:
-  // локальный сервер получает данные из URL и сразу печатает.
+  const payload={...inv,paper_size:(paper==='A4'?'A4':'A5')};
+
+  // GitHub Pages is HTTPS while the local Windows server is HTTP.
+  // Safari may block fetch as mixed content, so use the proven top-level
+  // navigation fallback with UTF-8 JSON encoded as URL-safe base64.
   if(location.protocol==='https:' && /^http:\/\//i.test(base)){
-    const url=base+'/print-link?data='+encodeURIComponent(base64UrlUtf8(inv));
+    const url=base+'/print-link?data='+encodeURIComponent(base64UrlUtf8(payload));
     const w=window.open(url,'_blank');
     if(!w){
       alert('Safari заблокировал окно печати. Разрешите всплывающие окна для приложения и попробуйте ещё раз.');
       return false;
     }
-    toast('Отправлено на печать');
+    toast('Отправлено на печать: '+payload.paper_size);
     return true;
   }
 
   try{
-    const r=await fetch(base+'/print',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(inv)});
+    const r=await fetch(base+'/print',{
+      method:'POST',
+      headers:{'Content-Type':'application/json; charset=utf-8'},
+      body:JSON.stringify(payload),
+      cache:'no-store'
+    });
     if(!r.ok){
       const body=await r.text();
       throw new Error(body||('HTTP '+r.status));
     }
-    toast('Отправлено на печать');
+    toast('Отправлено на печать: '+payload.paper_size);
     return true;
   }catch(e){
-    const retry=confirm('Не удалось связаться с компьютером. Проверьте, что Jaan Print Server запущен, Pantum подключён по USB и iPhone находится в той же Wi‑Fi сети. Изменить адрес сервера?');
-    if(retry){localStorage.removeItem(PRINT_SERVER_KEY);return sendToPrintServer(inv)}
+    alert('Не удалось связаться с компьютером. Проверьте Jaan Print Server и адрес сервера в настройках печати.');
     return false;
   }
 }
-document.getElementById('printBtn').addEventListener('click',async()=>{
+const printChoice=document.getElementById('printChoice');
+const paperA5=document.getElementById('paperA5');
+const paperA4=document.getElementById('paperA4');
+const printServerText=document.getElementById('printServerText');
+let selectedPaper=(localStorage.getItem(PRINT_PAPER_KEY)==='A4'?'A4':'A5');
+
+function refreshPrintChoice(){
+  paperA5.classList.toggle('active',selectedPaper==='A5');
+  paperA4.classList.toggle('active',selectedPaper==='A4');
+  printServerText.textContent=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
+}
+function openPrintChoice(){
   const inv=currentSnapshot();
   if(!inv.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return}
-  const ok=await sendToPrintServer(inv);
-  if(ok){history.unshift(inv);saveHistory();renderHistory();renderStats()}
+  refreshPrintChoice();
+  printChoice.classList.add('show');
+  printChoice.setAttribute('aria-hidden','false');
+}
+function closePrintChoice(){
+  printChoice.classList.remove('show');
+  printChoice.setAttribute('aria-hidden','true');
+}
+paperA5.addEventListener('click',()=>{selectedPaper='A5';localStorage.setItem(PRINT_PAPER_KEY,'A5');refreshPrintChoice()});
+paperA4.addEventListener('click',()=>{selectedPaper='A4';localStorage.setItem(PRINT_PAPER_KEY,'A4');refreshPrintChoice()});
+document.getElementById('changePrintServer').addEventListener('click',()=>{
+  const current=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
+  const entered=prompt('Адрес сервера печати. Например:\\nhttp://jaan-print.local:8765\\nили\\nhttp://192.168.31.137:8765',current);
+  if(entered===null)return;
+  const base=normalizePrintServer(entered);
+  if(base)localStorage.setItem(PRINT_SERVER_KEY,base);
+  refreshPrintChoice();
 });
+document.getElementById('cancelPrint').addEventListener('click',closePrintChoice);
+printChoice.addEventListener('click',e=>{if(e.target===printChoice)closePrintChoice()});
+document.getElementById('confirmPrint').addEventListener('click',async()=>{
+  const btn=document.getElementById('confirmPrint');
+  const inv=currentSnapshot();
+  btn.disabled=true;
+  const old=btn.textContent;
+  btn.textContent='Отправляю…';
+  try{
+    const ok=await sendToPrintServer(inv,selectedPaper);
+    if(ok)closePrintChoice();
+  }finally{
+    btn.disabled=false;
+    btn.textContent=old;
+  }
+});
+document.getElementById('printBtn').addEventListener('click',openPrintChoice);
 
 const modal=document.getElementById('historyModal');
 const commentModal=document.getElementById('commentModal');
@@ -266,190 +313,6 @@ async function exportInvoice(inv){
 function updateDate(){elDate.textContent=dateText();}
 updateDate();load();render();renderHistory();renderStats();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-</script>
-
-<script id="jaan-print-settings-v10">
-(function(){
-  function normServer(v){
-    return String(v||'').trim().replace(/\/$/,'');
-  }
-  function getPrintServer(){
-    return normServer(localStorage.getItem(PRINT_SERVER_KEY) || DEFAULT_PRINT_SERVER);
-  }
-  function setPrintServer(v){
-    const n=normServer(v);
-    if(n) localStorage.setItem(PRINT_SERVER_KEY,n);
-    return n;
-  }
-  function getPaper(){
-    const p=localStorage.getItem(PRINT_PAPER_KEY);
-    return p==='A4' ? 'A4' : 'A5';
-  }
-  function setPaper(p){
-    const v=p==='A4'?'A4':'A5';
-    localStorage.setItem(PRINT_PAPER_KEY,v);
-    return v;
-  }
-
-  window.jaanChangePrintServer=function(){
-    const current=getPrintServer();
-    const entered=prompt(
-      'Адрес сервера печати.\n\nНапример:\nhttp://jaan-print.local:8765\nили\nhttp://192.168.31.137:8765',
-      current
-    );
-    if(entered===null) return current;
-    const saved=setPrintServer(entered);
-    if(!saved) return current;
-    return saved;
-  };
-
-  function buildPayload(){
-    // Reuse the app's own current invoice state.
-    // These globals exist in the current JAAN invoice app.
-    const safeItems = Array.isArray(window.items) ? window.items : (typeof items!=='undefined' && Array.isArray(items) ? items : []);
-    const customerEl = document.querySelector('#customer, #recipient, [name="customer"], [name="recipient"]');
-    const commentEl = document.querySelector('#comment, #notes, [name="comment"], [name="notes"]');
-
-    let customer = '';
-    let comment = '';
-    try { customer = typeof recipient!=='undefined' ? String(recipient||'') : ''; } catch(e){}
-    try { if(!customer && typeof customerName!=='undefined') customer=String(customerName||''); } catch(e){}
-    if(!customer && customerEl) customer=customerEl.value||'';
-
-    try { comment = typeof comment!=='undefined' ? String(comment||'') : ''; } catch(e){}
-    if(commentEl) comment = commentEl.value||comment;
-
-    const normalized = safeItems.map(x => ({
-      name: x.name ?? x.title ?? x.product ?? '',
-      qty: Number(x.qty ?? x.quantity ?? x.count ?? 0),
-      price: Number(x.price ?? x.cost ?? 0),
-      sum: Number(x.sum ?? x.total ?? ((x.qty ?? x.quantity ?? x.count ?? 0)*(x.price ?? x.cost ?? 0)))
-    }));
-
-    return {
-      date: new Date().toLocaleDateString('ru-RU'),
-      recipient: customer,
-      items: normalized,
-      comment: comment
-    };
-  }
-
-  async function directPost(base,paper){
-    const payload=buildPayload();
-    payload.paper_size=paper;
-    const r=await fetch(base+'/print',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload),
-      cache:'no-store'
-    });
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return await r.json().catch(()=>({ok:true}));
-  }
-
-  function fallbackLink(base,paper){
-    const payload=buildPayload();
-    payload.paper_size=paper;
-    const encoded=encodeURIComponent(JSON.stringify(payload));
-    // Navigation fallback for iOS/PWA mixed-content edge cases.
-    window.location.href=base+'/print-link?data='+encoded;
-  }
-
-  async function sendPrint(paper){
-    const base=getPrintServer();
-    try{
-      await directPost(base,paper);
-      if(typeof toast==='function') toast('Отправлено на печать: '+paper);
-      else alert('Отправлено на печать: '+paper);
-    }catch(err){
-      fallbackLink(base,paper);
-    }
-    // IMPORTANT: printing does NOT save the invoice to history.
-  }
-
-  window.jaanOpenPrintDialog=function(){
-    const old=document.querySelector('.jaan-print-modal-backdrop');
-    if(old) old.remove();
-    let selected=getPaper();
-
-    const bd=document.createElement('div');
-    bd.className='jaan-print-modal-backdrop';
-    bd.innerHTML=`
-      <div class="jaan-print-modal" role="dialog" aria-modal="true">
-        <h3>Печать накладной</h3>
-        <div class="row">
-          <button type="button" data-paper="A5">A5</button>
-          <button type="button" data-paper="A4">A4</button>
-        </div>
-        <div class="serverbox">Сервер: <span id="jaan-server-current"></span></div>
-        <div class="row">
-          <button type="button" id="jaan-change-server">Изменить IP / адрес</button>
-          <button type="button" class="primary" id="jaan-do-print">Распечатать</button>
-        </div>
-        <button type="button" class="cancel" id="jaan-cancel-print">Отмена</button>
-      </div>`;
-    document.body.appendChild(bd);
-
-    const refresh=()=>{
-      bd.querySelector('#jaan-server-current').textContent=getPrintServer();
-      bd.querySelectorAll('[data-paper]').forEach(b=>b.classList.toggle('active',b.dataset.paper===selected));
-    };
-    refresh();
-
-    bd.querySelectorAll('[data-paper]').forEach(b=>{
-      b.onclick=()=>{ selected=setPaper(b.dataset.paper); refresh(); };
-    });
-    bd.querySelector('#jaan-change-server').onclick=()=>{ jaanChangePrintServer(); refresh(); };
-    bd.querySelector('#jaan-cancel-print').onclick=()=>bd.remove();
-    bd.addEventListener('click',e=>{ if(e.target===bd) bd.remove(); });
-    bd.querySelector('#jaan-do-print').onclick=async()=>{
-      const btn=bd.querySelector('#jaan-do-print');
-      btn.disabled=true; btn.textContent='Отправляю…';
-      try{
-        await sendPrint(selected);
-        bd.remove();
-      }catch(e){
-        btn.disabled=false; btn.textContent='Распечатать';
-        alert('Не удалось отправить на печать.');
-      }
-    };
-  };
-
-  // Rebind printer-like controls after the existing app is initialized.
-  function bind(){
-    const selectors=[
-      '#printBtn','#print-btn','#btnPrint','#printButton',
-      '[data-action="print"]','.print-btn','.btn-print',
-      'button[aria-label*="печ" i]','button[title*="печ" i]'
-    ];
-    let found=false;
-    selectors.forEach(sel=>{
-      document.querySelectorAll(sel).forEach(el=>{
-        if(el.dataset.jaanV10Bound==='1') return;
-        el.dataset.jaanV10Bound='1';
-        // Capture-phase listener blocks the old behavior, including auto-save.
-        el.addEventListener('click',function(e){
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          jaanOpenPrintDialog();
-        },true);
-        found=true;
-      });
-    });
-    // Fallback: buttons whose visible text/title resembles printer action.
-    document.querySelectorAll('button,a').forEach(el=>{
-      const s=((el.textContent||'')+' '+(el.getAttribute('aria-label')||'')+' '+(el.getAttribute('title')||'')).toLowerCase();
-      if((s.includes('печать')||s.includes('распечат')) && el.dataset.jaanV10Bound!=='1'){
-        el.dataset.jaanV10Bound='1';
-        el.addEventListener('click',function(e){
-          e.preventDefault();e.stopImmediatePropagation();jaanOpenPrintDialog();
-        },true);
-      }
-    });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{bind();setTimeout(bind,500)});
-  else {bind();setTimeout(bind,500);}
-})();
 </script>
 
 </body>
