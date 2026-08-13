@@ -33,6 +33,7 @@
   <main class="app">
     <div class="top"><div><div class="title">Накладная</div><div class="sub" id="currentDate"></div></div><div class="top-actions">
       <button class="icon-btn primary-icon" id="saveBtn" aria-label="Сохранить накладную" title="Сохранить накладную"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button>
+      <button class="icon-btn" id="printBtn" aria-label="Печать" title="Печать"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg></button>
       <button class="icon-btn" id="historyBtn" aria-label="История" title="История"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></button>
       <button class="icon-btn" id="statsBtn" aria-label="Статистика" title="Статистика"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
     </div></div>
@@ -61,6 +62,7 @@ const STORAGE_KEY='invoice-calc-items-v1';
 const NAME_KEY='invoice-calc-customer-v1';
 const HISTORY_KEY='invoice-calc-history-v1';
 const COMMENT_KEY='invoice-calc-comment-v1';
+const PRINT_SERVER_KEY='jaan-print-server-url-v1';
 let items=[];
 let history=[];
 let currentComment='';
@@ -104,6 +106,31 @@ document.getElementById('saveBtn').addEventListener('click',()=>{
   const inv=currentSnapshot();
   if(!inv.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return}
   history.unshift(inv); saveHistory(); renderHistory(); renderStats(); toast('Накладная сохранена');
+});
+
+async function sendToPrintServer(inv){
+  const base=(localStorage.getItem(PRINT_SERVER_KEY)||'').trim().replace(/\/$/,'');
+  if(!base){
+    const entered=prompt('Адрес Jaan Print Server на компьютере. Например: http://192.168.1.25:8765');
+    if(!entered)return false;
+    localStorage.setItem(PRINT_SERVER_KEY,entered.trim().replace(/\/$/,''));
+    return sendToPrintServer(inv);
+  }
+  try{
+    const r=await fetch(base+'/print',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(inv)});
+    if(!r.ok)throw new Error(await r.text());
+    toast('Отправлено на печать');return true;
+  }catch(e){
+    const retry=confirm('Не удалось связаться с компьютером. Проверьте, что Jaan Print Server запущен и iPhone находится в той же Wi‑Fi сети. Изменить адрес сервера?');
+    if(retry){localStorage.removeItem(PRINT_SERVER_KEY);return sendToPrintServer(inv)}
+    return false;
+  }
+}
+document.getElementById('printBtn').addEventListener('click',async()=>{
+  const inv=currentSnapshot();
+  if(!inv.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return}
+  const ok=await sendToPrintServer(inv);
+  if(ok){history.unshift(inv);saveHistory();renderHistory();renderStats()}
 });
 
 const modal=document.getElementById('historyModal');
