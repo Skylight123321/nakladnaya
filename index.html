@@ -28,6 +28,31 @@
     .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     @media(max-width:560px){.stats-grid{grid-template-columns:1fr}.customer-line{grid-template-columns:1fr auto}.headers{display:none}.row{grid-template-columns:1fr 74px 104px 38px}.title{font-size:25px}.card{padding:10px}.sum{grid-column:1/4;text-align:left;color:var(--muted);font-size:14px;padding-left:2px}.del{grid-column:4;grid-row:1/3}.actions{grid-template-columns:1fr}.total-value{font-size:27px}.history-buttons{grid-template-columns:1fr 1fr auto}}
   </style>
+
+<style id="jaan-print-settings-style">
+.jaan-print-modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;
+  display:flex;align-items:flex-end;justify-content:center;padding:16px;
+}
+.jaan-print-modal{
+  width:min(560px,100%);background:#fff;color:#111827;border-radius:24px;
+  padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.28);font-family:inherit;
+}
+.jaan-print-modal h3{margin:2px 0 14px;font-size:20px}
+.jaan-print-modal .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.jaan-print-modal button{
+  border:0;border-radius:16px;padding:14px 16px;font:inherit;font-weight:700;
+  background:#eef1f5;color:#111827
+}
+.jaan-print-modal button.primary{background:#111827;color:#fff}
+.jaan-print-modal button.active{outline:3px solid #111827}
+.jaan-print-modal .serverbox{
+  background:#f4f5f7;border-radius:14px;padding:12px;margin:8px 0 12px;
+  font-size:13px;overflow-wrap:anywhere;color:#4b5563
+}
+.jaan-print-modal .cancel{width:100%;margin-top:4px}
+</style>
+
 </head>
 <body>
   <main class="app">
@@ -62,7 +87,9 @@ const STORAGE_KEY='invoice-calc-items-v1';
 const NAME_KEY='invoice-calc-customer-v1';
 const HISTORY_KEY='invoice-calc-history-v1';
 const COMMENT_KEY='invoice-calc-comment-v1';
-const PRINT_SERVER_KEY='jaan-print-server-url-v1';
+const PRINT_SERVER_KEY='jaan-print-server-url-v3';
+const DEFAULT_PRINT_SERVER='http://jaan-print.local:8765';
+const PRINT_PAPER_KEY='jaan-print-paper-v1';
 let items=[];
 let history=[];
 let currentComment='';
@@ -122,7 +149,7 @@ function normalizePrintServer(raw){
 async function sendToPrintServer(inv){
   let base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||'');
   if(!base){
-    const entered=prompt('Адрес Jaan Print Server на компьютере. Например: http://192.168.1.25:8765');
+    const entered=prompt('Адрес Jaan Print Server. Обычно менять не нужно:', DEFAULT_PRINT_SERVER);
     if(!entered)return false;
     base=normalizePrintServer(entered);
     localStorage.setItem(PRINT_SERVER_KEY,base);
@@ -200,7 +227,7 @@ function renderHistory(){
 }
 document.getElementById('historyList').addEventListener('click',async e=>{
   const id=e.target.dataset.id;if(!id)return;const inv=history.find(x=>x.id===id);if(!inv)return;
-  if(e.target.classList.contains('open-inv')){elName.value=inv.customer||'';currentComment=inv.comment||'';updateCommentButton();items=inv.items.map(i=>({id:uid(),...i}));if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];render();closeHistory();toast('Накладная открыта')}
+  if(e.target.classList.contains('open-inv')){elName.value=inv.customer||'';currentComment=inv.comment||'';updateCommentButton();items=(inv.items||[]).map(i=>({id:uid(),...i}));if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];render();closeHistory();toast('Накладная открыта')}
   if(e.target.classList.contains('photo-inv')){await exportInvoice(inv)}
   if(e.target.classList.contains('delete-inv')){if(confirm('Удалить эту накладную из истории?')){history=history.filter(x=>x.id!==id);saveHistory();renderHistory();renderStats()}}
 });
@@ -240,5 +267,190 @@ function updateDate(){elDate.textContent=dateText();}
 updateDate();load();render();renderHistory();renderStats();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
+
+<script id="jaan-print-settings-v10">
+(function(){
+  function normServer(v){
+    return String(v||'').trim().replace(/\/$/,'');
+  }
+  function getPrintServer(){
+    return normServer(localStorage.getItem(PRINT_SERVER_KEY) || DEFAULT_PRINT_SERVER);
+  }
+  function setPrintServer(v){
+    const n=normServer(v);
+    if(n) localStorage.setItem(PRINT_SERVER_KEY,n);
+    return n;
+  }
+  function getPaper(){
+    const p=localStorage.getItem(PRINT_PAPER_KEY);
+    return p==='A4' ? 'A4' : 'A5';
+  }
+  function setPaper(p){
+    const v=p==='A4'?'A4':'A5';
+    localStorage.setItem(PRINT_PAPER_KEY,v);
+    return v;
+  }
+
+  window.jaanChangePrintServer=function(){
+    const current=getPrintServer();
+    const entered=prompt(
+      'Адрес сервера печати.\n\nНапример:\nhttp://jaan-print.local:8765\nили\nhttp://192.168.31.137:8765',
+      current
+    );
+    if(entered===null) return current;
+    const saved=setPrintServer(entered);
+    if(!saved) return current;
+    return saved;
+  };
+
+  function buildPayload(){
+    // Reuse the app's own current invoice state.
+    // These globals exist in the current JAAN invoice app.
+    const safeItems = Array.isArray(window.items) ? window.items : (typeof items!=='undefined' && Array.isArray(items) ? items : []);
+    const customerEl = document.querySelector('#customer, #recipient, [name="customer"], [name="recipient"]');
+    const commentEl = document.querySelector('#comment, #notes, [name="comment"], [name="notes"]');
+
+    let customer = '';
+    let comment = '';
+    try { customer = typeof recipient!=='undefined' ? String(recipient||'') : ''; } catch(e){}
+    try { if(!customer && typeof customerName!=='undefined') customer=String(customerName||''); } catch(e){}
+    if(!customer && customerEl) customer=customerEl.value||'';
+
+    try { comment = typeof comment!=='undefined' ? String(comment||'') : ''; } catch(e){}
+    if(commentEl) comment = commentEl.value||comment;
+
+    const normalized = safeItems.map(x => ({
+      name: x.name ?? x.title ?? x.product ?? '',
+      qty: Number(x.qty ?? x.quantity ?? x.count ?? 0),
+      price: Number(x.price ?? x.cost ?? 0),
+      sum: Number(x.sum ?? x.total ?? ((x.qty ?? x.quantity ?? x.count ?? 0)*(x.price ?? x.cost ?? 0)))
+    }));
+
+    return {
+      date: new Date().toLocaleDateString('ru-RU'),
+      recipient: customer,
+      items: normalized,
+      comment: comment
+    };
+  }
+
+  async function directPost(base,paper){
+    const payload=buildPayload();
+    payload.paper_size=paper;
+    const r=await fetch(base+'/print',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+      cache:'no-store'
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return await r.json().catch(()=>({ok:true}));
+  }
+
+  function fallbackLink(base,paper){
+    const payload=buildPayload();
+    payload.paper_size=paper;
+    const encoded=encodeURIComponent(JSON.stringify(payload));
+    // Navigation fallback for iOS/PWA mixed-content edge cases.
+    window.location.href=base+'/print-link?data='+encoded;
+  }
+
+  async function sendPrint(paper){
+    const base=getPrintServer();
+    try{
+      await directPost(base,paper);
+      if(typeof toast==='function') toast('Отправлено на печать: '+paper);
+      else alert('Отправлено на печать: '+paper);
+    }catch(err){
+      fallbackLink(base,paper);
+    }
+    // IMPORTANT: printing does NOT save the invoice to history.
+  }
+
+  window.jaanOpenPrintDialog=function(){
+    const old=document.querySelector('.jaan-print-modal-backdrop');
+    if(old) old.remove();
+    let selected=getPaper();
+
+    const bd=document.createElement('div');
+    bd.className='jaan-print-modal-backdrop';
+    bd.innerHTML=`
+      <div class="jaan-print-modal" role="dialog" aria-modal="true">
+        <h3>Печать накладной</h3>
+        <div class="row">
+          <button type="button" data-paper="A5">A5</button>
+          <button type="button" data-paper="A4">A4</button>
+        </div>
+        <div class="serverbox">Сервер: <span id="jaan-server-current"></span></div>
+        <div class="row">
+          <button type="button" id="jaan-change-server">Изменить IP / адрес</button>
+          <button type="button" class="primary" id="jaan-do-print">Распечатать</button>
+        </div>
+        <button type="button" class="cancel" id="jaan-cancel-print">Отмена</button>
+      </div>`;
+    document.body.appendChild(bd);
+
+    const refresh=()=>{
+      bd.querySelector('#jaan-server-current').textContent=getPrintServer();
+      bd.querySelectorAll('[data-paper]').forEach(b=>b.classList.toggle('active',b.dataset.paper===selected));
+    };
+    refresh();
+
+    bd.querySelectorAll('[data-paper]').forEach(b=>{
+      b.onclick=()=>{ selected=setPaper(b.dataset.paper); refresh(); };
+    });
+    bd.querySelector('#jaan-change-server').onclick=()=>{ jaanChangePrintServer(); refresh(); };
+    bd.querySelector('#jaan-cancel-print').onclick=()=>bd.remove();
+    bd.addEventListener('click',e=>{ if(e.target===bd) bd.remove(); });
+    bd.querySelector('#jaan-do-print').onclick=async()=>{
+      const btn=bd.querySelector('#jaan-do-print');
+      btn.disabled=true; btn.textContent='Отправляю…';
+      try{
+        await sendPrint(selected);
+        bd.remove();
+      }catch(e){
+        btn.disabled=false; btn.textContent='Распечатать';
+        alert('Не удалось отправить на печать.');
+      }
+    };
+  };
+
+  // Rebind printer-like controls after the existing app is initialized.
+  function bind(){
+    const selectors=[
+      '#printBtn','#print-btn','#btnPrint','#printButton',
+      '[data-action="print"]','.print-btn','.btn-print',
+      'button[aria-label*="печ" i]','button[title*="печ" i]'
+    ];
+    let found=false;
+    selectors.forEach(sel=>{
+      document.querySelectorAll(sel).forEach(el=>{
+        if(el.dataset.jaanV10Bound==='1') return;
+        el.dataset.jaanV10Bound='1';
+        // Capture-phase listener blocks the old behavior, including auto-save.
+        el.addEventListener('click',function(e){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          jaanOpenPrintDialog();
+        },true);
+        found=true;
+      });
+    });
+    // Fallback: buttons whose visible text/title resembles printer action.
+    document.querySelectorAll('button,a').forEach(el=>{
+      const s=((el.textContent||'')+' '+(el.getAttribute('aria-label')||'')+' '+(el.getAttribute('title')||'')).toLowerCase();
+      if((s.includes('печать')||s.includes('распечат')) && el.dataset.jaanV10Bound!=='1'){
+        el.dataset.jaanV10Bound='1';
+        el.addEventListener('click',function(e){
+          e.preventDefault();e.stopImmediatePropagation();jaanOpenPrintDialog();
+        },true);
+      }
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{bind();setTimeout(bind,500)});
+  else {bind();setTimeout(bind,500);}
+})();
+</script>
+
 </body>
 </html>
