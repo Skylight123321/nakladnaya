@@ -194,7 +194,7 @@ function renderHistory(){
   if(!shown.length){list.innerHTML='<div class="no-history">'+(history.length?'Ничего не найдено.':'Сохранённых накладных пока нет.')+'</div>';return}
   shown.forEach(inv=>{
     const card=document.createElement('div');card.className='history-card';
-    card.innerHTML=`<div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${inv.items.length} ${plural(inv.items.length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number(inv.total)||totalOf(inv.items))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="danger delete-inv" data-id="${inv.id}">×</button></div>`;
+    card.innerHTML=`<div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number(inv.total)||totalOf(inv.items))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="danger delete-inv" data-id="${inv.id}">×</button></div>`;
     list.appendChild(card);
   });
 }
