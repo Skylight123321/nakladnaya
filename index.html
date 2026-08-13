@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#0F2A4A" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Накладная" />
@@ -11,18 +11,18 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <style>
-    :root { --bg:#f6f7f9; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#111827; --danger:#b91c1c; }
+    :root { --bg:#f6f7f9; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#111827; --danger:#b91c1c; --jaan-blue:#0F2A4A; }
     *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;color:var(--text)}
     .app{max-width:760px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 28px)}
     .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.title{font-size:28px;font-weight:800;letter-spacing:-.02em}.sub{font-size:13px;color:var(--muted);margin-top:3px}.shop-info{text-align:center;color:var(--muted);font-size:11px;line-height:1.45;margin-top:10px;padding-bottom:2px}
-    .top-actions{display:flex;gap:8px;align-items:center}.icon-btn{width:42px;height:42px;padding:0;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;display:grid;place-items:center}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.icon-btn:active{background:#f3f4f6}.icon-btn.primary-icon{background:#2563eb;color:#fff;border-color:#2563eb}.icon-btn.has-comment{background:#eef2ff;border-color:#c7d2fe;color:#3730a3}
+    .top-actions{display:flex;gap:8px;align-items:center}.icon-btn{width:42px;height:42px;padding:0;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;display:grid;place-items:center}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.icon-btn:active{background:#f3f4f6}.icon-btn.primary-icon{background:var(--jaan-blue);color:#fff;border-color:var(--jaan-blue)}.icon-btn.has-comment{background:#eef2ff;border-color:#c7d2fe;color:#3730a3}
     .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 2px 12px rgba(15,23,42,.04)}
     .customer-wrap{margin-bottom:12px}.customer-line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.customer-wrap label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 6px 2px}.customer{font-size:16px}
     .row{display:grid;grid-template-columns:1.3fr .7fr .9fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)} .row:last-child{border-bottom:0}
     input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;outline:none} input:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}
     .sum{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;white-space:nowrap}.del{border:0;background:#fff;color:var(--danger);font-size:22px;width:38px;height:38px;border-radius:10px}.del:active{background:#fee2e2}
-    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px} button{font:inherit;border:0;border-radius:14px;padding:13px 14px;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
-    .total{margin-top:14px;background:#0f172a;color:#fff;border-radius:18px;padding:18px;display:flex;align-items:end;justify-content:space-between;gap:12px}.total-label{font-size:13px;color:#cbd5e1}.total-value{font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.count{font-size:13px;color:#cbd5e1;text-align:right}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}#addBtn{background:var(--jaan-blue);color:#fff} button{font:inherit;border:0;border-radius:14px;padding:13px 14px;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .total{margin-top:14px;background:var(--jaan-blue);color:#fff;border-radius:18px;padding:18px;display:flex;align-items:end;justify-content:space-between;gap:12px}.total-label{font-size:13px;color:#cbd5e1}.total-value{font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.count{font-size:13px;color:#cbd5e1;text-align:right}
     .headers{display:grid;grid-template-columns:1.3fr .7fr .9fr 38px;gap:8px;color:var(--muted);font-size:11px;padding:0 0 6px;text-transform:uppercase;letter-spacing:.04em}.empty{color:var(--muted);text-align:center;padding:22px 8px}
     .search-wrap{margin-bottom:12px}.search-wrap input{background:#fff}.comment-area{width:100%;min-height:130px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:16px;outline:none}.comment-area:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}.comment-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-value{font-size:22px;font-weight:800;margin-top:6px}.stat-count{font-size:12px;color:var(--muted);margin-top:4px}.history-comment{font-size:12px;color:#4b5563;margin-top:7px;line-height:1.35}.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}.modal.show{display:flex}.sheet{background:#f6f7f9;width:min(760px,100%);max-height:88vh;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 18px);overflow:auto}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.sheet-title{font-size:22px;font-weight:800}.close{background:#e5e7eb;padding:8px 12px}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}.history-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-name{font-weight:800;font-size:16px}.history-meta{font-size:12px;color:var(--muted);margin-top:3px}.history-total{font-weight:800;white-space:nowrap}.history-buttons{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:11px}.history-buttons button{padding:10px;font-size:13px}.danger{color:var(--danger);background:#fff;border:1px solid #fecaca}.no-history{text-align:center;color:var(--muted);padding:28px 10px}
     .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -97,7 +97,7 @@ const STORAGE_KEY='invoice-calc-items-v1';
 const NAME_KEY='invoice-calc-customer-v1';
 const HISTORY_KEY='invoice-calc-history-v1';
 const COMMENT_KEY='invoice-calc-comment-v1';
-const PRINT_SERVER_KEY='jaan-print-server-url-v4';
+const PRINT_SERVER_KEY='jaan-print-server-url-v5';
 const DEFAULT_PRINT_SERVER='http://jaan-print.local:8765';
 const PRINT_PAPER_KEY='jaan-print-paper-v1';
 let items=[];
@@ -105,13 +105,33 @@ let history=[];
 let currentComment='';
 const elItems=document.getElementById('items'), elTotal=document.getElementById('grandTotal'), elCount=document.getElementById('countText'), elDate=document.getElementById('currentDate'), elName=document.getElementById('customerName');
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function load(){try{items=JSON.parse(localStorage.getItem(STORAGE_KEY))||[]}catch{items=[]} if(!items.length) items=[{id:uid(),name:'',qty:'',price:''}]; items=items.map(i=>(!i.name && !i.price && (i.qty===1 || i.qty==='1'))?{...i,qty:''}:i); elName.value=localStorage.getItem(NAME_KEY)||''; try{history=JSON.parse(localStorage.getItem(HISTORY_KEY))||[]}catch{history=[]} currentComment=localStorage.getItem(COMMENT_KEY)||''; updateCommentButton()}
+function load(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    items=Array.isArray(raw)?raw.filter(i=>i&&typeof i==='object'):[];
+  }catch{items=[]}
+  if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];
+  items=items.map(i=>{
+    const safe={id:i.id||uid(),name:String(i.name??''),qty:String(i.qty??''),price:String(i.price??'')};
+    if(!safe.name&&!safe.price&&safe.qty==='1')safe.qty='';
+    return safe;
+  });
+  elName.value=localStorage.getItem(NAME_KEY)||'';
+  try{
+    const raw=JSON.parse(localStorage.getItem(HISTORY_KEY));
+    history=Array.isArray(raw)?raw.filter(inv=>inv&&typeof inv==='object').map(inv=>({
+      ...inv,items:Array.isArray(inv.items)?inv.items.filter(i=>i&&typeof i==='object'):[]
+    })):[];
+  }catch{history=[]}
+  currentComment=localStorage.getItem(COMMENT_KEY)||'';
+  updateCommentButton();
+}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(items)); localStorage.setItem(NAME_KEY,elName.value); localStorage.setItem(COMMENT_KEY,currentComment)}
 function saveHistory(){localStorage.setItem(HISTORY_KEY,JSON.stringify(history))}
 function money(n){return new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0)}
 function plural(n){const a=n%10,b=n%100; if(a===1&&b!==11)return 'позиция'; if(a>=2&&a<=4&&(b<10||b>=20))return 'позиции'; return 'позиций'}
 function parseNum(v){return parseFloat(String(v).replace(',','.'))||0}
-function totalOf(list){return list.reduce((a,i)=>a+parseNum(i.qty)*parseNum(i.price),0)}
+function totalOf(list){return (Array.isArray(list)?list:[]).reduce((a,i)=>a+parseNum(i&&i.qty)*parseNum(i&&i.price),0)}
 function render(){
   elItems.innerHTML='';
   items.forEach(item=>{
@@ -137,7 +157,7 @@ document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('О
 
 function currentSnapshot(){
   const cleanItems=items.filter(i=>String(i.name).trim() || parseNum(i.qty) || parseNum(i.price)).map(i=>({name:String(i.name||'').trim(),qty:String(i.qty||''),price:String(i.price||'')}));
-  return {id:uid(),dateISO:new Date().toISOString(),date:dateText(),customer:elName.value.trim(),comment:currentComment.trim(),items:cleanItems,total:totalOf(cleanItems),printLayout:'A5_HALF_A4'};
+  return {id:uid(),dateISO:new Date().toISOString(),date:dateText(),customer:elName.value.trim(),comment:currentComment.trim(),items:cleanItems,total:totalOf(cleanItems)};
 }
 document.getElementById('saveBtn').addEventListener('click',()=>{
   const inv=currentSnapshot();
@@ -145,12 +165,6 @@ document.getElementById('saveBtn').addEventListener('click',()=>{
   history.unshift(inv); saveHistory(); renderHistory(); renderStats(); toast('Накладная сохранена');
 });
 
-function base64UrlUtf8(obj){
-  const bytes=new TextEncoder().encode(JSON.stringify(obj));
-  let binary='';
-  for(const b of bytes)binary+=String.fromCharCode(b);
-  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
 function normalizePrintServer(raw){
   let v=String(raw||'').trim().replace(/\/$/,'');
   if(v && !/^https?:\/\//i.test(v))v='http://'+v;
@@ -267,7 +281,13 @@ paperA5.addEventListener('click',()=>{selectedPaper='A5';localStorage.setItem(PR
 paperA4.addEventListener('click',()=>{selectedPaper='A4';localStorage.setItem(PRINT_PAPER_KEY,'A4');refreshPrintChoice()});
 document.getElementById('changePrintServer').addEventListener('click',()=>{
   const current=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
-  const entered=prompt('Адрес сервера печати. Например:\\nhttp://jaan-print.local:8765\\nили\\nhttp://192.168.31.137:8765',current);
+  const entered=prompt(`Адрес сервера печати.
+
+Например:
+http://jaan-print.local:8765
+
+или:
+http://192.168.31.137:8765`,current);
   if(entered===null)return;
   const base=normalizePrintServer(entered);
   if(base)localStorage.setItem(PRINT_SERVER_KEY,base);
@@ -322,7 +342,7 @@ function renderHistory(){
   if(!shown.length){list.innerHTML='<div class="no-history">'+(history.length?'Ничего не найдено.':'Сохранённых накладных пока нет.')+'</div>';return}
   shown.forEach(inv=>{
     const card=document.createElement('div');card.className='history-card';
-    card.innerHTML=`<div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number(inv.total)||totalOf(inv.items))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="danger delete-inv" data-id="${inv.id}">×</button></div>`;
+    card.innerHTML=`<div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number(inv.total)||totalOf(inv.items||[]))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="danger delete-inv" data-id="${inv.id}">×</button></div>`;
     list.appendChild(card);
   });
 }
@@ -335,10 +355,11 @@ document.getElementById('historyList').addEventListener('click',async e=>{
 
 function wrapText(ctx,text,maxWidth){const words=String(text||'').split(/\s+/);const lines=[];let line='';for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);return lines.length?lines:['—']}
 async function invoiceBlob(inv){
+  const invoiceItems=Array.isArray(inv?.items)?inv.items:[];
   const scale=2, W=900, pad=64, rowGap=22;
   const canvas=document.createElement('canvas');const ctx=canvas.getContext('2d');
   ctx.font='36px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
-  let bodyH=0;inv.items.forEach(i=>{const lines=wrapText(ctx,i.name||'Товар',390);bodyH+=Math.max(74,lines.length*38+24)+rowGap});
+  let bodyH=0;invoiceItems.forEach(i=>{const lines=wrapText(ctx,i.name||'Товар',390);bodyH+=Math.max(74,lines.length*38+24)+rowGap});
   const H=Math.max(1180,430+bodyH+250);canvas.width=W*scale;canvas.height=H*scale;ctx.scale(scale,scale);
   ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#111827';ctx.font='700 54px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Накладная',pad,92);
@@ -347,13 +368,13 @@ async function invoiceBlob(inv){
   ctx.fillStyle='#111827';ctx.font='700 29px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Получатель',pad,y);ctx.font='34px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(inv.customer||'—',pad,y+48);y+=105;if(inv.comment){ctx.fillStyle='#6b7280';ctx.font='700 24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Комментарий',pad,y);ctx.fillStyle='#111827';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';const cl=wrapText(ctx,inv.comment,W-pad*2);cl.slice(0,4).forEach((line,idx)=>ctx.fillText(line,pad,y+38+idx*34));y+=55+Math.min(cl.length,4)*34;}
   ctx.strokeStyle='#e5e7eb';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=42;
   ctx.fillStyle='#6b7280';ctx.font='700 22px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('ТОВАР',pad,y);ctx.fillText('КОЛ-ВО',505,y);ctx.fillText('ЦЕНА',630,y);ctx.fillText('СУММА',760,y);y+=35;
-  for(const i of inv.items){
+  for(const i of invoiceItems){
     const lines=wrapText(ctx,i.name||'Товар',390);const rowH=Math.max(74,lines.length*38+24);
     ctx.fillStyle='#111827';ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';lines.forEach((line,idx)=>ctx.fillText(line,pad,y+35+idx*38));
     ctx.font='28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(String(i.qty||'—'),505,y+35);ctx.fillText(money(parseNum(i.price)),630,y+35);ctx.font='700 28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(parseNum(i.qty)*parseNum(i.price)),760,y+35);
     y+=rowH;ctx.strokeStyle='#e5e7eb';ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=rowGap;
   }
-  y+=18;ctx.fillStyle='#0f172a';roundRect(ctx,pad,y,W-pad*2,140,24);ctx.fill();ctx.fillStyle='#cbd5e1';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Итого',pad+30,y+45);ctx.fillStyle='#fff';ctx.font='800 50px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(Number(inv.total)||totalOf(inv.items)),pad+30,y+105);
+  y+=18;ctx.fillStyle='#0f172a';roundRect(ctx,pad,y,W-pad*2,140,24);ctx.fill();ctx.fillStyle='#cbd5e1';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Итого',pad+30,y+45);ctx.fillStyle='#fff';ctx.font='800 50px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(Number(inv.total)||totalOf(invoiceItems)),pad+30,y+105);
   y+=205;ctx.textAlign='center';ctx.fillStyle='#6b7280';ctx.font='24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Jaan',W/2,y);ctx.font='21px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('пав.609, 12 ряд',W/2,y+34);ctx.textAlign='start';
   return new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
 }
