@@ -159,10 +159,20 @@ function currentSnapshot(){
   const cleanItems=items.filter(i=>String(i.name).trim() || parseNum(i.qty) || parseNum(i.price)).map(i=>({name:String(i.name||'').trim(),qty:String(i.qty||''),price:String(i.price||'')}));
   return {id:uid(),dateISO:new Date().toISOString(),date:dateText(),customer:elName.value.trim(),comment:currentComment.trim(),items:cleanItems,total:totalOf(cleanItems)};
 }
-document.getElementById('saveBtn').addEventListener('click',()=>{
+document.getElementById('saveBtn').addEventListener('click',async()=>{
   const inv=currentSnapshot();
-  if(!inv.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return}
-  history.unshift(inv); saveHistory(); renderHistory(); renderStats(); toast('Накладная сохранена');
+  if(!inv.items.length){
+    alert('Добавьте хотя бы одну заполненную позицию.');
+    return;
+  }
+
+  history.unshift(inv);
+  saveHistory();
+  renderHistory();
+  renderStats();
+  toast('Сохранено');
+
+  await saveInvoiceToServer(inv);
 });
 
 function normalizePrintServer(raw){
@@ -193,6 +203,36 @@ function encodePrintBridgePayload(obj){
   let binary='';
   for(const b of bytes)binary+=String.fromCharCode(b);
   return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+
+async function saveInvoiceToServer(inv){
+  const base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
+
+  if(location.protocol==='https:' && /^http:\/\//i.test(base)){
+    const url=base+'/save-bridge#data='+encodePrintBridgePayload(inv);
+    const w=window.open(url,'_blank');
+    if(!w){
+      alert('Safari заблокировал окно сохранения. Разрешите всплывающие окна и попробуйте ещё раз.');
+      return false;
+    }
+    return true;
+  }
+
+  try{
+    const r=await fetch(base+'/save-excel',{
+      method:'POST',
+      headers:{'Content-Type':'application/json; charset=utf-8'},
+      body:JSON.stringify(inv),
+      cache:'no-store'
+    });
+    const body=await r.json().catch(()=>({}));
+    if(!r.ok || body.ok===false)throw new Error(body.error||('HTTP '+r.status));
+    return true;
+  }catch(e){
+    alert('Накладная сохранена в историю на iPhone, но Excel на ПК сохранить не удалось. Проверьте сервер и адрес.');
+    return false;
+  }
 }
 
 async function sendToPrintServer(inv,paper){
