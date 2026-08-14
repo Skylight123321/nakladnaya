@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="Накладная" />
   <title>Накладная</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png" />
   <style>
     :root { --bg:#f6f7f9; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#111827; --danger:#b91c1c; --jaan-blue:#0F2A4A; }
     *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;color:var(--text)}
@@ -24,9 +24,9 @@
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}#addBtn{background:var(--jaan-blue);color:#fff} button{font:inherit;border:0;border-radius:14px;padding:13px 14px;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
     .total{margin-top:14px;background:var(--jaan-blue);color:#fff;border-radius:18px;padding:18px;display:flex;align-items:end;justify-content:space-between;gap:12px}.total-label{font-size:13px;color:#cbd5e1}.total-value{font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.count{font-size:13px;color:#cbd5e1;text-align:right}
     .headers{display:grid;grid-template-columns:1.3fr .7fr .9fr 38px;gap:8px;color:var(--muted);font-size:11px;padding:0 0 6px;text-transform:uppercase;letter-spacing:.04em}.empty{color:var(--muted);text-align:center;padding:22px 8px}
-    .search-wrap{margin-bottom:12px}.search-wrap input{background:#fff}.comment-area{width:100%;min-height:130px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:16px;outline:none}.comment-area:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}.comment-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-value{font-size:22px;font-weight:800;margin-top:6px}.stat-count{font-size:12px;color:var(--muted);margin-top:4px}.history-comment{font-size:12px;color:#4b5563;margin-top:7px;line-height:1.35}.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}.modal.show{display:flex}.sheet{background:#f6f7f9;width:min(760px,100%);max-height:88vh;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 18px);overflow:auto}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.sheet-title{font-size:22px;font-weight:800}.close{background:#e5e7eb;padding:8px 12px}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}.history-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-name{font-weight:800;font-size:16px}.history-meta{font-size:12px;color:var(--muted);margin-top:3px}.history-total{font-weight:800;white-space:nowrap}.history-buttons{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:11px}.history-buttons button{padding:10px;font-size:13px}.danger{color:var(--danger);background:#fff;border:1px solid #fecaca}.no-history{text-align:center;color:var(--muted);padding:28px 10px}
+    .search-wrap{margin-bottom:12px}.search-wrap input{background:#fff}.comment-area{width:100%;min-height:130px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:16px;outline:none}.comment-area:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}.comment-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-value{font-size:22px;font-weight:800;margin-top:6px}.stat-count{font-size:12px;color:var(--muted);margin-top:4px}.history-comment{font-size:12px;color:#4b5563;margin-top:7px;line-height:1.35}.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}.modal.show{display:flex}.sheet{background:#f6f7f9;width:min(760px,100%);max-height:88vh;border-radius:22px 22px 0 0;padding:14px 14px calc(env(safe-area-inset-bottom) + 18px);overflow:auto}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.sheet-title{font-size:22px;font-weight:800}.close{background:#e5e7eb;padding:8px 12px}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}.history-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-name{font-weight:800;font-size:16px}.history-meta{font-size:12px;color:var(--muted);margin-top:3px}.history-total{font-weight:800;white-space:nowrap}.history-buttons{display:grid;grid-template-columns:1fr 1fr 42px 42px;gap:8px;margin-top:11px}.history-buttons button{padding:10px;font-size:13px}.danger{color:var(--danger);background:#fff;border:1px solid #fecaca}.no-history{text-align:center;color:var(--muted);padding:28px 10px}
     .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    @media(max-width:560px){.stats-grid{grid-template-columns:1fr}.customer-line{grid-template-columns:1fr auto}.headers{display:none}.row{grid-template-columns:1fr 74px 104px 38px}.title{font-size:25px}.card{padding:10px}.sum{grid-column:1/4;text-align:left;color:var(--muted);font-size:14px;padding-left:2px}.del{grid-column:4;grid-row:1/3}.actions{grid-template-columns:1fr}.total-value{font-size:27px}.history-buttons{grid-template-columns:1fr 1fr auto}}
+    @media(max-width:560px){.stats-grid{grid-template-columns:1fr}.customer-line{grid-template-columns:1fr auto}.headers{display:none}.row{grid-template-columns:1fr 74px 104px 38px}.title{font-size:25px}.card{padding:10px}.sum{grid-column:1/4;text-align:left;color:var(--muted);font-size:14px;padding-left:2px}.del{grid-column:4;grid-row:1/3}.actions{grid-template-columns:1fr}.total-value{font-size:27px}.history-buttons{grid-template-columns:1fr 1fr 42px 42px}}
   
     .print-choice{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:flex-end;justify-content:center}
     .print-choice.show{display:flex}
@@ -76,7 +76,7 @@
         <button type="button" id="paperA5">A5</button>
         <button type="button" id="paperA4">A4</button>
       </div>
-      <div class="print-server">Сервер: <span id="printServerText"></span><br><span style="display:block;margin-top:6px;color:#6b7280">Сервер будет проверен при отправке.</span></div>
+      <div class="print-server">Сервер: <span id="printServerText"></span></div>
       <div class="print-action-row">
         <button type="button" class="secondary" id="changePrintServer">Изменить IP / адрес</button>
         <button type="button" class="primary" id="confirmPrint">Распечатать</button>
@@ -96,6 +96,7 @@ const PRINT_PAPER_KEY='jaan-print-paper-v1';
 let items=[];
 let history=[];
 let currentComment='';
+let historySaveBusy=false;
 const elItems=document.getElementById('items'), elTotal=document.getElementById('grandTotal'), elCount=document.getElementById('countText'), elDate=document.getElementById('currentDate'), elName=document.getElementById('customerName');
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function load(){
@@ -113,17 +114,18 @@ function load(){
   try{
     const raw=JSON.parse(localStorage.getItem(HISTORY_KEY));
     history=Array.isArray(raw)?raw.filter(inv=>inv&&typeof inv==='object').map(inv=>({
-      ...inv,items:Array.isArray(inv.items)?inv.items.filter(i=>i&&typeof i==='object'):[]
+      ...inv,id:inv.id||uid(),items:Array.isArray(inv.items)?inv.items.filter(i=>i&&typeof i==='object'):[]
     })):[];
   }catch{history=[]}
   currentComment=localStorage.getItem(COMMENT_KEY)||'';
   updateCommentButton();
 }
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(items)); localStorage.setItem(NAME_KEY,elName.value); localStorage.setItem(COMMENT_KEY,currentComment)}
-function saveHistory(){localStorage.setItem(HISTORY_KEY,JSON.stringify(history))}
+function safeSet(key,value){try{localStorage.setItem(key,value);return true}catch(e){console.error('localStorage error',e);return false}}
+function save(){safeSet(STORAGE_KEY,JSON.stringify(items));safeSet(NAME_KEY,elName.value);safeSet(COMMENT_KEY,currentComment)}
+function saveHistory(){return safeSet(HISTORY_KEY,JSON.stringify(history))}
 function money(n){return new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0)}
 function plural(n){const a=n%10,b=n%100; if(a===1&&b!==11)return 'позиция'; if(a>=2&&a<=4&&(b<10||b>=20))return 'позиции'; return 'позиций'}
-function parseNum(v){return parseFloat(String(v).replace(',','.'))||0}
+function parseNum(v){const n=Number(String(v??'').replace(/\s+/g,'').replace(',','.'));return Number.isFinite(n)?n:0}
 function totalOf(list){return (Array.isArray(list)?list:[]).reduce((a,i)=>a+parseNum(i&&i.qty)*parseNum(i&&i.price),0)}
 function render(){
   elItems.innerHTML='';
@@ -152,20 +154,22 @@ function currentSnapshot(){
   const cleanItems=items.filter(i=>String(i.name).trim() || parseNum(i.qty) || parseNum(i.price)).map(i=>({name:String(i.name||'').trim(),qty:String(i.qty||''),price:String(i.price||'')}));
   return {id:uid(),dateISO:new Date().toISOString(),date:dateText(),customer:elName.value.trim(),comment:currentComment.trim(),items:cleanItems,total:totalOf(cleanItems)};
 }
-document.getElementById('saveBtn').addEventListener('click',async()=>{
+document.getElementById('saveBtn').addEventListener('click',()=>{
+  if(historySaveBusy)return;
   const inv=currentSnapshot();
-  if(!inv.items.length){
-    alert('Добавьте хотя бы одну заполненную позицию.');
+  if(!inv.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return}
+  historySaveBusy=true;
+  history.unshift(inv);
+  if(!saveHistory()){
+    history.shift();
+    alert('Не удалось сохранить накладную в историю. Память приложения Safari может быть заполнена. Удалите ненужные старые накладные и попробуйте снова.');
+    historySaveBusy=false;
     return;
   }
-
-  history.unshift(inv);
-  saveHistory();
   renderHistory();
   renderStats();
-  toast('Сохранено');
-
-  await saveInvoiceToServer(inv);
+  toast('Сохранено в историю');
+  setTimeout(()=>{historySaveBusy=false},600);
 });
 
 function normalizePrintServer(raw){
@@ -339,39 +343,66 @@ function renderHistory(){
   if(!shown.length){list.innerHTML='<div class="no-history">'+(history.length?'Ничего не найдено.':'Сохранённых накладных пока нет.')+'</div>';return}
   shown.forEach(inv=>{
     const card=document.createElement('div');card.className='history-card';
-    card.innerHTML=`<div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number(inv.total)||totalOf(inv.items||[]))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="danger delete-inv" data-id="${inv.id}">×</button></div>`;
+    card.innerHTML=`<div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(inv.items||[]))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="icon-btn primary-icon save-pc-inv" data-id="${inv.id}" aria-label="Сохранить на ПК" title="Сохранить на ПК"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button><button class="danger delete-inv" data-id="${inv.id}" aria-label="Удалить" title="Удалить">×</button></div>`;
     list.appendChild(card);
   });
 }
 document.getElementById('historyList').addEventListener('click',async e=>{
-  const id=e.target.dataset.id;if(!id)return;const inv=history.find(x=>x.id===id);if(!inv)return;
-  if(e.target.classList.contains('open-inv')){elName.value=inv.customer||'';currentComment=inv.comment||'';updateCommentButton();items=(inv.items||[]).map(i=>({id:uid(),...i}));if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];render();closeHistory();toast('Накладная открыта')}
-  if(e.target.classList.contains('photo-inv')){await exportInvoice(inv)}
-  if(e.target.classList.contains('delete-inv')){if(confirm('Удалить эту накладную из истории?')){history=history.filter(x=>x.id!==id);saveHistory();renderHistory();renderStats()}}
+  const action=e.target.closest('button[data-id]');
+  const id=action?.dataset.id;if(!id)return;const inv=history.find(x=>x.id===id);if(!inv)return;
+  if(action.classList.contains('open-inv')){elName.value=inv.customer||'';currentComment=inv.comment||'';updateCommentButton();items=(inv.items||[]).map(i=>({...i,id:uid()}));if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];render();closeHistory();toast('Накладная открыта')}
+  if(action.classList.contains('save-pc-inv')){const ok=await saveInvoiceToServer(inv);if(ok)toast('Сохранение на ПК запущено')}
+  if(action.classList.contains('photo-inv')){await exportInvoice(inv)}
+  if(action.classList.contains('delete-inv')){if(confirm('Удалить эту накладную из истории?')){const before=history;history=history.filter(x=>x.id!==id);if(!saveHistory()){history=before;alert('Не удалось изменить историю. Safari не разрешил запись в хранилище.');return}renderHistory();renderStats()}}
 });
 
-function wrapText(ctx,text,maxWidth){const words=String(text||'').split(/\s+/);const lines=[];let line='';for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);return lines.length?lines:['—']}
+function wrapText(ctx,text,maxWidth){
+  const src=String(text||'').trim();if(!src)return ['—'];
+  const out=[];
+  for(const paragraph of src.split(/\n/)){
+    const words=paragraph.split(/\s+/).filter(Boolean);let line='';
+    for(let word of words){
+      if(ctx.measureText(word).width>maxWidth){
+        if(line){out.push(line);line=''}
+        let part='';
+        for(const ch of word){const test=part+ch;if(part&&ctx.measureText(test).width>maxWidth){out.push(part);part=ch}else part=test}
+        if(part)line=part;
+        continue;
+      }
+      const test=line?line+' '+word:word;
+      if(line&&ctx.measureText(test).width>maxWidth){out.push(line);line=word}else line=test;
+    }
+    if(line){out.push(line);line=''}
+  }
+  return out.length?out:['—'];
+}
 async function invoiceBlob(inv){
   const invoiceItems=Array.isArray(inv?.items)?inv.items:[];
-  const scale=2, W=900, pad=64, rowGap=22;
+  const scale=2,W=900,pad=64,rowGap=22;
   const canvas=document.createElement('canvas');const ctx=canvas.getContext('2d');
-  ctx.font='36px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
-  let bodyH=0;invoiceItems.forEach(i=>{const lines=wrapText(ctx,i.name||'Товар',390);bodyH+=Math.max(74,lines.length*38+24)+rowGap});
-  const H=Math.max(1180,430+bodyH+250);canvas.width=W*scale;canvas.height=H*scale;ctx.scale(scale,scale);
+  if(!ctx)return null;
+  ctx.font='34px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+  const customerLines=wrapText(ctx,inv.customer||'—',W-pad*2);
+  ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+  const commentLines=inv.comment?wrapText(ctx,inv.comment,W-pad*2):[];
+  ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';
+  const prepared=invoiceItems.map(i=>({item:i,lines:wrapText(ctx,i.name||'Товар',390)}));
+  const bodyH=prepared.reduce((sum,x)=>sum+Math.max(74,x.lines.length*38+24)+rowGap,0);
+  const customerH=Math.max(48,customerLines.length*40);
+  const commentH=commentLines.length?55+commentLines.length*34:0;
+  const H=Math.max(1180,205+29+customerH+57+commentH+42+35+bodyH+18+140+205+70);
+  canvas.width=W*scale;canvas.height=H*scale;ctx.scale(scale,scale);
   ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#111827';ctx.font='700 54px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Накладная',pad,92);
   ctx.fillStyle='#6b7280';ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(inv.date||dateText(new Date(inv.dateISO)),pad,140);
   let y=205;
-  ctx.fillStyle='#111827';ctx.font='700 29px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Получатель',pad,y);ctx.font='34px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(inv.customer||'—',pad,y+48);y+=105;if(inv.comment){ctx.fillStyle='#6b7280';ctx.font='700 24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Комментарий',pad,y);ctx.fillStyle='#111827';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';const cl=wrapText(ctx,inv.comment,W-pad*2);cl.slice(0,4).forEach((line,idx)=>ctx.fillText(line,pad,y+38+idx*34));y+=55+Math.min(cl.length,4)*34;}
+  ctx.fillStyle='#111827';ctx.font='700 29px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Получатель',pad,y);y+=48;
+  ctx.font='34px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';customerLines.forEach(line=>{ctx.fillText(line,pad,y);y+=40});y+=17;
+  if(commentLines.length){ctx.fillStyle='#6b7280';ctx.font='700 24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Комментарий',pad,y);y+=38;ctx.fillStyle='#111827';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';commentLines.forEach(line=>{ctx.fillText(line,pad,y);y+=34});y+=17}
   ctx.strokeStyle='#e5e7eb';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=42;
   ctx.fillStyle='#6b7280';ctx.font='700 22px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('ТОВАР',pad,y);ctx.fillText('КОЛ-ВО',505,y);ctx.fillText('ЦЕНА',630,y);ctx.fillText('СУММА',760,y);y+=35;
-  for(const i of invoiceItems){
-    const lines=wrapText(ctx,i.name||'Товар',390);const rowH=Math.max(74,lines.length*38+24);
-    ctx.fillStyle='#111827';ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';lines.forEach((line,idx)=>ctx.fillText(line,pad,y+35+idx*38));
-    ctx.font='28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(String(i.qty||'—'),505,y+35);ctx.fillText(money(parseNum(i.price)),630,y+35);ctx.font='700 28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(parseNum(i.qty)*parseNum(i.price)),760,y+35);
-    y+=rowH;ctx.strokeStyle='#e5e7eb';ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=rowGap;
-  }
-  y+=18;ctx.fillStyle='#0f172a';roundRect(ctx,pad,y,W-pad*2,140,24);ctx.fill();ctx.fillStyle='#cbd5e1';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Итого',pad+30,y+45);ctx.fillStyle='#fff';ctx.font='800 50px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(Number(inv.total)||totalOf(invoiceItems)),pad+30,y+105);
+  for(const x of prepared){const i=x.item,lines=x.lines,rowH=Math.max(74,lines.length*38+24);ctx.fillStyle='#111827';ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';lines.forEach((line,idx)=>ctx.fillText(line,pad,y+35+idx*38));ctx.font='28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(String(i.qty||'—'),505,y+35);ctx.fillText(money(parseNum(i.price)),630,y+35);ctx.font='700 28px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(parseNum(i.qty)*parseNum(i.price)),760,y+35);y+=rowH;ctx.strokeStyle='#e5e7eb';ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();y+=rowGap}
+  y+=18;ctx.fillStyle='#0f172a';roundRect(ctx,pad,y,W-pad*2,140,24);ctx.fill();ctx.fillStyle='#cbd5e1';ctx.font='27px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Итого',pad+30,y+45);ctx.fillStyle='#fff';ctx.font='800 50px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(money(Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(invoiceItems)),pad+30,y+105);
   y+=205;ctx.textAlign='center';ctx.fillStyle='#6b7280';ctx.font='24px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Jaan',W/2,y);ctx.font='21px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('пав.609, 12 ряд',W/2,y+34);ctx.textAlign='start';
   return new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
 }
@@ -383,8 +414,9 @@ async function exportInvoice(inv){
   const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Фото создано');
 }
 function updateDate(){elDate.textContent=dateText();}
-updateDate();load();render();renderHistory();renderStats();
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+updateDate();setInterval(updateDate,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDate()});
+load();render();renderHistory();renderStats();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('Service Worker registration failed',e));
 </script>
 
 </body>
