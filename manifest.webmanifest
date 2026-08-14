@@ -1,13 +1,23 @@
 {
-  "name": "Накладная — калькулятор",
-  "short_name": "Накладная",
+  "name": "JAAN — Накладная и склад",
+  "short_name": "JAAN",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f6f7f9",
   "theme_color": "#0F2A4A",
-  "description": "Накладные Jaan: расчёт, история, печать и сохранение Excel.",
+  "description": "Накладные Jaan, складской учёт, остатки, приход, движения, аналитика, печать и Excel.",
   "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
