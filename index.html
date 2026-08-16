@@ -18,7 +18,7 @@
     .top-actions{display:flex;gap:8px;align-items:center}.icon-btn{width:42px;height:42px;padding:0;border:1px solid var(--line);background:#fff;color:var(--jaan-blue);border-radius:12px;display:grid;place-items:center}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.icon-btn:active{background:#eef3f8}.icon-btn.has-comment{background:#eef3f8;border-color:#cbd5e1;color:var(--jaan-blue)}.customer-tools{display:flex;gap:8px;align-items:center}
     .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 2px 12px rgba(15,23,42,.04)}
     .customer-wrap{margin-bottom:12px}.customer-line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.customer-wrap label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 6px 2px}.customer{font-size:16px}
-    .swipe-wrap{position:relative;overflow:hidden;border-bottom:1px solid var(--line);border-radius:0;isolation:isolate}.swipe-wrap:last-child{border-bottom:0}.swipe-action{position:absolute;inset:0 0 0 auto;width:78px;display:grid;place-items:center;background:#fee2e2;z-index:0}.swipe-delete{width:100%;height:100%;border-radius:0;background:#fee2e2;color:var(--danger);display:grid;place-items:center;padding:0}.swipe-delete svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.row{position:relative;z-index:1;display:grid;grid-template-columns:1.3fr .7fr .9fr;gap:8px;align-items:center;padding:10px 0;background:#fff;transform:translateX(0);transition:transform .22s cubic-bezier(.2,.8,.2,1);touch-action:pan-y}.row.swiping{transition:none}.swipe-wrap.removing{animation:collapseRow .22s ease forwards;pointer-events:none}
+    .swipe-wrap{position:relative;overflow:hidden;border-bottom:1px solid var(--line);border-radius:0;isolation:isolate}.swipe-wrap.suggestions-open{overflow:visible;z-index:40;isolation:auto}.swipe-wrap:last-child{border-bottom:0}.swipe-action{position:absolute;inset:0 0 0 auto;width:78px;display:grid;place-items:center;background:#fee2e2;z-index:0}.swipe-delete{width:100%;height:100%;border-radius:0;background:#fee2e2;color:var(--danger);display:grid;place-items:center;padding:0}.swipe-delete svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.row{position:relative;z-index:1;display:grid;grid-template-columns:1.3fr .7fr .9fr;gap:8px;align-items:center;padding:10px 0;background:#fff;transform:translateX(0);transition:transform .22s cubic-bezier(.2,.8,.2,1);touch-action:pan-y}.row.swiping{transition:none}.swipe-wrap.removing{animation:collapseRow .22s ease forwards;pointer-events:none}
     input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;outline:none} input:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}
     .sum{grid-column:1/-1;font-variant-numeric:tabular-nums;font-weight:700;text-align:right;white-space:nowrap;transition:opacity .16s ease}
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}#addBtn{background:var(--jaan-blue);color:#fff} button{font:inherit;border:0;border-radius:14px;padding:13px 14px;font-weight:700;transition:transform .16s ease,opacity .16s ease,background-color .16s ease,box-shadow .16s ease}button:active{transform:scale(.975)}.primary{background:var(--accent);color:#fff}.primary:disabled{opacity:.48;cursor:not-allowed}.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
@@ -55,7 +55,7 @@
 
   
     /* v11.2 convenience */
-    .suggest-host{position:relative}.inline-suggestions{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:25;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.14);overflow:hidden;display:none}.inline-suggestions.show{display:block}.suggestion-btn{display:block;width:100%;text-align:left;background:#fff;border-radius:0;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600}.suggestion-btn:last-child{border-bottom:0}.suggestion-btn small{display:block;color:var(--muted);font-weight:500;margin-top:2px}.quick-chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px}.quick-chip{background:#fff;border:1px solid var(--line);color:#4b5563;padding:8px 11px;border-radius:999px;font-size:12px}.multi-variant-list{display:grid;gap:8px;margin:10px 0}.multi-variant-row{display:grid;grid-template-columns:1fr 96px;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px}.multi-variant-meta{font-size:13px}.multi-variant-meta b{display:block;font-size:14px}.multi-variant-row input{text-align:center}.customer-list{display:grid;gap:8px;margin:10px 0 16px}.customer-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px}.customer-card-main{display:flex;justify-content:space-between;gap:10px;align-items:center}.customer-card-name{font-weight:800}.customer-card-meta{font-size:12px;color:var(--muted);margin-top:3px}.customer-card-actions{display:flex;gap:6px}.customer-card-actions button{padding:8px 10px;font-size:12px}.stock-batch-note{font-size:12px;color:var(--muted);margin:7px 0}.batch-summary{font-size:12px;color:var(--muted);padding:8px 2px}
+    .suggest-host{position:relative}.inline-suggestions{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:25;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 30px rgba(15,23,42,.14);overflow:hidden;display:none}.inline-suggestions.show{display:block}.suggestion-btn{display:block;width:100%;text-align:left;background:#fff;border-radius:0;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600;line-height:1.25}.suggestion-btn:last-child{border-bottom:0}.suggestion-btn small{display:block;color:var(--muted);font-weight:500;margin-top:3px}.suggestion-sku{color:var(--jaan-blue);font-weight:800}.quick-chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px}.quick-chip{background:#fff;border:1px solid var(--line);color:#4b5563;padding:8px 11px;border-radius:999px;font-size:12px}.multi-variant-list{display:grid;gap:8px;margin:10px 0}.multi-variant-row{display:grid;grid-template-columns:1fr 96px;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px}.multi-variant-meta{font-size:13px}.multi-variant-meta b{display:block;font-size:14px}.multi-variant-row input{text-align:center}.customer-list{display:grid;gap:8px;margin:10px 0 16px}.customer-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px}.customer-card-main{display:flex;justify-content:space-between;gap:10px;align-items:center}.customer-card-name{font-weight:800}.customer-card-meta{font-size:12px;color:var(--muted);margin-top:3px}.customer-card-actions{display:flex;gap:6px}.customer-card-actions button{padding:8px 10px;font-size:12px}.stock-batch-note{font-size:12px;color:var(--muted);margin:7px 0}.batch-summary{font-size:12px;color:var(--muted);padding:8px 2px}
 </style>
 
 </head>
@@ -244,14 +244,33 @@ function load(){
   if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];
   const rawDraftSource=String(localStorage.getItem(DRAFT_SOURCE_KEY)||''),rawDraftStock=localStorage.getItem(DRAFT_SOURCE_STOCK_KEY)==='1';
   draftSourceInvoiceId=safeRefId(rawDraftSource);draftSourceStockPosted=rawDraftStock;
-  const before=JSON.stringify({w:rawWarehouse,h:rawHistory,m:rawMovements,i:rawItems,c:rawCustomers}),after=JSON.stringify({w:warehouse,h:history,m:movements,i:items,c:customers});
-  if(before!==after || rawDraftSource!==draftSourceInvoiceId){if(!persistCoreAndDraftState())console.warn('JAAN data migration could not be persisted; normalized data is used for this session.')}
   elName.value=localStorage.getItem(NAME_KEY)||'';
   currentComment=localStorage.getItem(COMMENT_KEY)||'';
+  const before=JSON.stringify({w:rawWarehouse,h:rawHistory,m:rawMovements,i:rawItems,c:rawCustomers}),after=JSON.stringify({w:warehouse,h:history,m:movements,i:items,c:customers});
+  if(before!==after || rawDraftSource!==draftSourceInvoiceId){if(!persistCoreAndDraftState())console.warn('JAAN data migration could not be persisted; normalized data is used for this session.')}
   updateCommentButton();
 }
 function safeSet(key,value){try{localStorage.setItem(key,value);return true}catch(e){console.error('localStorage error',e);return false}}
-function save(){safeSet(STORAGE_KEY,JSON.stringify(items));safeSet(NAME_KEY,elName.value);safeSet(COMMENT_KEY,currentComment);if(draftSourceInvoiceId)safeSet(DRAFT_SOURCE_KEY,draftSourceInvoiceId);if(draftSourceStockPosted)safeSet(DRAFT_SOURCE_STOCK_KEY,'1')}
+let draftStorageWarningShown=false;
+function persistDraftState(){
+  const keys=[STORAGE_KEY,NAME_KEY,COMMENT_KEY,DRAFT_SOURCE_KEY,DRAFT_SOURCE_STOCK_KEY];
+  const before=new Map(keys.map(k=>[k,localStorage.getItem(k)]));
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(items));
+    localStorage.setItem(NAME_KEY,elName.value);
+    localStorage.setItem(COMMENT_KEY,currentComment);
+    if(draftSourceInvoiceId)localStorage.setItem(DRAFT_SOURCE_KEY,draftSourceInvoiceId);else localStorage.removeItem(DRAFT_SOURCE_KEY);
+    if(draftSourceStockPosted)localStorage.setItem(DRAFT_SOURCE_STOCK_KEY,'1');else localStorage.removeItem(DRAFT_SOURCE_STOCK_KEY);
+    draftStorageWarningShown=false;
+    return true;
+  }catch(e){
+    console.error('Draft localStorage error',e);
+    try{for(const [k,v] of before){if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}}catch{}
+    if(!draftStorageWarningShown){draftStorageWarningShown=true;setTimeout(()=>toast('Не удалось сохранить черновик в памяти Safari'),0)}
+    return false;
+  }
+}
+function save(){return persistDraftState()}
 function saveHistory(){return safeSet(HISTORY_KEY,JSON.stringify(history))}
 function saveWarehouse(){return safeSet(WAREHOUSE_KEY,JSON.stringify(warehouse))}
 function saveMovements(){return safeSet(MOVEMENTS_KEY,JSON.stringify(movements))}
@@ -287,7 +306,7 @@ elItems.addEventListener('focusin',e=>{if(e.target.classList.contains('name')){c
 elItems.addEventListener('click',e=>{const b=e.target.closest('.stock-suggestion');if(!b)return;const row=e.target.closest('.row');pickerTargetItemId=row?.dataset.id||null;hideAllItemSuggestions();openPickerQty(b.dataset.productId)});
 elName.addEventListener('input',save);
 document.getElementById('addBtn').addEventListener('click',()=>{items.push({id:uid(),name:'',qty:'',price:''});render(); setTimeout(()=>elItems.lastElementChild?.querySelector('.name')?.focus(),0)});
-const clearControl=document.getElementById('clearControl');function disarmClear(){clearControl.classList.remove('armed');clearControl.querySelector('.clear-confirm').setAttribute('aria-hidden','true');clearTimeout(disarmClear.timer)}function armClear(){clearControl.classList.add('armed');clearControl.querySelector('.clear-confirm').setAttribute('aria-hidden','false');clearTimeout(disarmClear.timer);disarmClear.timer=setTimeout(disarmClear,5000)}document.getElementById('clearBtn').addEventListener('click',armClear);document.getElementById('cancelClear').addEventListener('click',disarmClear);document.getElementById('confirmClear').addEventListener('click',()=>{const beforeItems=items.map(i=>({...i})),beforeName=elName.value,beforeComment=currentComment,beforeSource=draftSourceInvoiceId,beforeSourceStock=draftSourceStockPosted;items=[{id:uid(),name:'',qty:'',price:''}];elName.value='';currentComment='';setDraftSourceInvoice('');updateCommentButton();disarmClear();render();save();toast('Накладная очищена','Вернуть',()=>{items=beforeItems;elName.value=beforeName;currentComment=beforeComment;setDraftSourceInvoice(beforeSource,beforeSourceStock);updateCommentButton();render();save()},4500)});
+const clearControl=document.getElementById('clearControl');function disarmClear(){clearControl.classList.remove('armed');clearControl.querySelector('.clear-confirm').setAttribute('aria-hidden','true');clearTimeout(disarmClear.timer)}function armClear(){clearControl.classList.add('armed');clearControl.querySelector('.clear-confirm').setAttribute('aria-hidden','false');clearTimeout(disarmClear.timer);disarmClear.timer=setTimeout(disarmClear,5000)}document.getElementById('clearBtn').addEventListener('click',armClear);document.getElementById('cancelClear').addEventListener('click',disarmClear);document.getElementById('confirmClear').addEventListener('click',()=>{const beforeItems=items.map(i=>({...i})),beforeName=elName.value,beforeComment=currentComment,beforeSource=draftSourceInvoiceId,beforeSourceStock=draftSourceStockPosted;items=[{id:uid(),name:'',qty:'',price:''}];elName.value='';currentComment='';setDraftSourceInvoice('',false,false);updateCommentButton();disarmClear();render();save();toast('Накладная очищена','Вернуть',()=>{items=beforeItems;elName.value=beforeName;currentComment=beforeComment;setDraftSourceInvoice(beforeSource,beforeSourceStock,false);updateCommentButton();render();save()},4500)});
 
 function currentSnapshot(){
   const cleanItems=items.filter(i=>String(i.name||'').trim() || String(i.qty??'').trim() || String(i.price??'').trim()).map(i=>({name:String(i.name||'').trim(),qty:String(i.qty??''),price:String(i.price??''),productId:i.productId||'',variantId:i.variantId||'',sku:i.sku||'',color:i.color||''}));
@@ -316,18 +335,20 @@ document.getElementById('saveBtn').addEventListener('click',()=>{
   }else if((fp===lastSavedFingerprint||fp===latestFp)&&!confirm('Эта накладная уже была сохранена без изменений. Сохранить её ещё раз?'))return;
   historySaveBusy=true;
   const beforeHistory=JSON.stringify(history),beforeWarehouse=JSON.stringify(warehouse),beforeMovements=JSON.stringify(movements),beforeCustomers=JSON.stringify(customers);
+  const beforeSource=draftSourceInvoiceId,beforeSourceStock=draftSourceStockPosted;
   inv.stockPosted=check.lines.length>0; inv.stockLines=check.lines;
   if(inv.stockPosted)postInvoiceStock(inv);
   history.unshift(inv);
   rememberCustomerFromInvoice(inv.customer);
-  if(!persistCoreState()){
-    history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);
-    persistCoreState();
+  setDraftSourceInvoice(inv.id,inv.stockPosted,false);
+  if(!persistCoreAndDraftState()){
+    history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;
+    persistCoreAndDraftState();
     alert('Не удалось сохранить накладную и изменения склада. Память приложения Safari может быть заполнена.');
     historySaveBusy=false;return;
   }
   renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();
-  lastSavedFingerprint=fp;setDraftSourceInvoice(inv.id,inv.stockPosted);toast(inv.stockPosted?'Накладная сохранена · склад списан':'Сохранено в историю');
+  lastSavedFingerprint=fp;toast(inv.stockPosted?'Накладная сохранена · склад списан':'Сохранено в историю');
   setTimeout(()=>{historySaveBusy=false},600);
 });
 
@@ -378,7 +399,7 @@ async function saveInvoiceToServer(inv){
 async function sendToPrintServer(inv,paper){
   let base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
   if(!base)base=DEFAULT_PRINT_SERVER;
-  localStorage.setItem(PRINT_SERVER_KEY,base);
+  safeSet(PRINT_SERVER_KEY,base);
 
   const payload={...inv,paper_size:(paper==='A4'?'A4':'A5')};
 
@@ -439,8 +460,8 @@ function closePrintChoice(){
   printChoice.classList.remove('show');
   printChoice.setAttribute('aria-hidden','true');
 }
-paperA5.addEventListener('click',()=>{selectedPaper='A5';localStorage.setItem(PRINT_PAPER_KEY,'A5');refreshPrintChoice()});
-paperA4.addEventListener('click',()=>{selectedPaper='A4';localStorage.setItem(PRINT_PAPER_KEY,'A4');refreshPrintChoice()});
+paperA5.addEventListener('click',()=>{selectedPaper='A5';safeSet(PRINT_PAPER_KEY,'A5');refreshPrintChoice()});
+paperA4.addEventListener('click',()=>{selectedPaper='A4';safeSet(PRINT_PAPER_KEY,'A4');refreshPrintChoice()});
 document.getElementById('changePrintServer').addEventListener('click',()=>{
   const current=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
   const entered=prompt(`Адрес сервера печати.
@@ -452,7 +473,7 @@ http://jaan-print.local:8765
 http://192.168.31.137:8765`,current);
   if(entered===null)return;
   const base=normalizePrintServer(entered);
-  if(base)localStorage.setItem(PRINT_SERVER_KEY,base);
+  if(base)safeSet(PRINT_SERVER_KEY,base);
   refreshPrintChoice();
 });
 document.getElementById('cancelPrint').addEventListener('click',closePrintChoice);
@@ -505,7 +526,7 @@ function renderHistory(){
   if(!shown.length){list.innerHTML='<div class="no-history">'+(history.length?'Ничего не найдено.':'Сохранённых накладных пока нет.')+'</div>';return}
   shown.forEach(inv=>{
     const wrap=document.createElement('div');wrap.className='swipe-wrap history-swipe animate-in';wrap.dataset.id=inv.id;
-    wrap.innerHTML=`<div class="swipe-action"><button class="swipe-delete" aria-label="Удалить накладную" title="Удалить"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2M19 6l-1 15H6L5 6M10 10v7M14 10v7"/></svg></button></div><div class="history-card"><div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||dateText(new Date(inv.dateISO)))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(inv.items||[]))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="icon-btn save-pc-inv" data-id="${inv.id}" aria-label="Сохранить на ПК" title="Сохранить на ПК"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button></div></div>`;
+    wrap.innerHTML=`<div class="swipe-action"><button class="swipe-delete" aria-label="Удалить накладную" title="Удалить"><svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2M19 6l-1 15H6L5 6M10 10v7M14 10v7"/></svg></button></div><div class="history-card"><div class="history-main"><div><div class="history-name">${escapeHtml(inv.customer||'Без имени')}</div><div class="history-meta">${escapeHtml(inv.date||(invDate(inv)?dateText(invDate(inv)):'Дата не указана'))} · ${(inv.items||[]).length} ${plural((inv.items||[]).length)}</div>${inv.comment?`<div class="history-comment">${escapeHtml(inv.comment)}</div>`:''}</div><div class="history-total">${money(Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(inv.items||[]))}</div></div><div class="history-buttons"><button class="secondary open-inv" data-id="${inv.id}">Открыть</button><button class="primary photo-inv" data-id="${inv.id}">Фото</button><button class="icon-btn save-pc-inv" data-id="${inv.id}" aria-label="Сохранить на ПК" title="Сохранить на ПК"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button></div></div>`;
     list.appendChild(wrap);attachSwipe(wrap,wrap.querySelector('.history-card'),()=>deleteHistoryInvoice(inv.id,wrap));
   });
 }
@@ -513,7 +534,7 @@ function deleteHistoryInvoice(id,wrap){const index=history.findIndex(x=>x.id===i
 document.getElementById('historyList').addEventListener('click',async e=>{
   const action=e.target.closest('button[data-id]');
   const id=action?.dataset.id;if(!id)return;const inv=history.find(x=>x.id===id);if(!inv)return;
-  if(action.classList.contains('open-inv')){lastSavedFingerprint=invoiceFingerprint(inv);setDraftSourceInvoice(inv.id,inv.stockPosted);elName.value=inv.customer||'';currentComment=inv.comment||'';updateCommentButton();items=(inv.items||[]).map(i=>({...i,id:uid()}));if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];render();closeHistory();toast('Накладная открыта')}
+  if(action.classList.contains('open-inv')){lastSavedFingerprint=invoiceFingerprint(inv);setDraftSourceInvoice(inv.id,inv.stockPosted,false);elName.value=inv.customer||'';currentComment=inv.comment||'';updateCommentButton();items=(inv.items||[]).map(i=>({...i,id:uid()}));if(!items.length)items=[{id:uid(),name:'',qty:'',price:''}];render();closeHistory();toast('Накладная открыта')}
   if(action.classList.contains('save-pc-inv')){const ok=await saveInvoiceToServer(inv);if(ok)toast('Сохранение на ПК запущено')}
   if(action.classList.contains('photo-inv')){await exportInvoice(inv)}
 });
@@ -556,7 +577,7 @@ async function invoiceBlob(inv){
   canvas.width=W*scale;canvas.height=H*scale;ctx.scale(scale,scale);
   ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#111827';ctx.font='700 54px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Накладная',pad,92);
-  ctx.fillStyle='#6b7280';ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(inv.date||dateText(new Date(inv.dateISO)),pad,140);
+  ctx.fillStyle='#6b7280';ctx.font='30px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText(inv.date||(invDate(inv)?dateText(invDate(inv)):'Дата не указана'),pad,140);
   let y=205;
   ctx.fillStyle='#111827';ctx.font='700 29px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';ctx.fillText('Получатель',pad,y);y+=48;
   ctx.font='34px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif';customerLines.forEach(line=>{ctx.fillText(line,pad,y);y+=40});y+=17;
@@ -603,7 +624,7 @@ function persistCoreState(){
   try{localStorage.setItem(HISTORY_KEY,JSON.stringify(history));localStorage.setItem(WAREHOUSE_KEY,JSON.stringify(warehouse));localStorage.setItem(MOVEMENTS_KEY,JSON.stringify(movements));localStorage.setItem(CUSTOMERS_KEY,JSON.stringify(customers));return true}catch(e){console.error(e);try{if(before.h===null)localStorage.removeItem(HISTORY_KEY);else localStorage.setItem(HISTORY_KEY,before.h);if(before.w===null)localStorage.removeItem(WAREHOUSE_KEY);else localStorage.setItem(WAREHOUSE_KEY,before.w);if(before.m===null)localStorage.removeItem(MOVEMENTS_KEY);else localStorage.setItem(MOVEMENTS_KEY,before.m);if(before.c===null)localStorage.removeItem(CUSTOMERS_KEY);else localStorage.setItem(CUSTOMERS_KEY,before.c)}catch{}return false}
 }
 function persistCoreAndDraftState(){
-  const keys=[HISTORY_KEY,WAREHOUSE_KEY,MOVEMENTS_KEY,CUSTOMERS_KEY,STORAGE_KEY,DRAFT_SOURCE_KEY,DRAFT_SOURCE_STOCK_KEY];
+  const keys=[HISTORY_KEY,WAREHOUSE_KEY,MOVEMENTS_KEY,CUSTOMERS_KEY,STORAGE_KEY,NAME_KEY,COMMENT_KEY,DRAFT_SOURCE_KEY,DRAFT_SOURCE_STOCK_KEY];
   const before=new Map(keys.map(k=>[k,localStorage.getItem(k)]));
   try{
     localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
@@ -611,6 +632,8 @@ function persistCoreAndDraftState(){
     localStorage.setItem(MOVEMENTS_KEY,JSON.stringify(movements));
     localStorage.setItem(CUSTOMERS_KEY,JSON.stringify(customers));
     localStorage.setItem(STORAGE_KEY,JSON.stringify(items));
+    localStorage.setItem(NAME_KEY,elName.value);
+    localStorage.setItem(COMMENT_KEY,currentComment);
     if(draftSourceInvoiceId)localStorage.setItem(DRAFT_SOURCE_KEY,draftSourceInvoiceId);else localStorage.removeItem(DRAFT_SOURCE_KEY);
     if(draftSourceStockPosted)localStorage.setItem(DRAFT_SOURCE_STOCK_KEY,'1');else localStorage.removeItem(DRAFT_SOURCE_STOCK_KEY);
     return true;
@@ -620,7 +643,7 @@ function persistCoreAndDraftState(){
     return false;
   }
 }
-function setDraftSourceInvoice(id='',stockPosted=false){draftSourceInvoiceId=safeRefId(id);draftSourceStockPosted=!!stockPosted;if(draftSourceInvoiceId)safeSet(DRAFT_SOURCE_KEY,draftSourceInvoiceId);else try{localStorage.removeItem(DRAFT_SOURCE_KEY)}catch{}if(draftSourceStockPosted)safeSet(DRAFT_SOURCE_STOCK_KEY,'1');else try{localStorage.removeItem(DRAFT_SOURCE_STOCK_KEY)}catch{}}
+function setDraftSourceInvoice(id='',stockPosted=false,persist=true){draftSourceInvoiceId=safeRefId(id);draftSourceStockPosted=!!stockPosted;if(persist)persistDraftState()}
 function invoiceFingerprint(inv){return JSON.stringify({customer:inv.customer||'',comment:inv.comment||'',items:(inv.items||[]).map(i=>({name:i.name||'',qty:String(i.qty||''),price:String(i.price||''),productId:i.productId||'',variantId:i.variantId||''}))})}
 function invoiceStockLines(inv){
   const map=new Map();
@@ -657,14 +680,14 @@ function renderWarehouse(){
 function renderWarehouseAnalytics(){
   const pane=document.getElementById('warehouseAnalyticsPane');if(!pane)return;
   const units=warehouse.reduce((a,p)=>a+productTotal(p),0),costRUB=warehouse.reduce((a,p)=>a+(p.purchaseCurrency==='RUB'?productTotal(p)*parseNum(p.purchasePrice):0),0),costBYN=warehouse.reduce((a,p)=>a+(p.purchaseCurrency==='BYN'?productTotal(p)*parseNum(p.purchasePrice):0),0),wholesale=warehouse.reduce((a,p)=>a+productTotal(p)*parseNum(p.wholesalePrice),0),retail=warehouse.reduce((a,p)=>a+productTotal(p)*parseNum(p.retailPrice),0),low=warehouse.reduce((a,p)=>a+(p.variants||[]).filter(v=>v.qty<=p.minStock).length,0);
-  const now=Date.now(),days30=30*86400000;const recent=movements.filter(m=>m.type==='sale'&&now-new Date(m.dateISO).getTime()<=days30);const sold=recent.reduce((a,m)=>a+m.qty,0);const rank={};for(const m of recent)rank[m.productId]=(rank[m.productId]||0)+m.qty;const top=Object.entries(rank).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const now=Date.now(),days30=30*86400000;const recent=movements.filter(m=>{if(m.type!=='sale')return false;const t=new Date(m.dateISO).getTime(),age=now-t;return Number.isFinite(t)&&age>=0&&age<=days30});const sold=recent.reduce((a,m)=>a+m.qty,0);const rank={};for(const m of recent)rank[m.productId]=(rank[m.productId]||0)+m.qty;const top=Object.entries(rank).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const monthStart=new Date();monthStart.setDate(1);monthStart.setHours(0,0,0,0);const month=statsFor(d=>d>=monthStart);
   pane.innerHTML=`<div class="analytics-grid"><div class="stat-card"><div class="stat-label">На складе</div><div class="stat-value">${units}</div><div class="stat-count">единиц</div></div><div class="stat-card"><div class="stat-label">Заканчиваются</div><div class="stat-value">${low}</div><div class="stat-count">вариантов ≤ минимума</div></div><div class="stat-card"><div class="stat-label">Себестоимость остатков</div><div class="stat-value">${costRUB?money(costRUB)+' ₽':costBYN?money(costBYN)+' BYN':'0,00'}</div><div class="stat-count">${costRUB&&costBYN?money(costBYN)+' BYN · валюты не складываются':'по закупочным ценам'}</div></div><div class="stat-card"><div class="stat-label">Оптовая стоимость</div><div class="stat-value">${money(wholesale)}</div><div class="stat-count">BYN по текущим оптовым ценам</div></div><div class="stat-card"><div class="stat-label">Розничная стоимость</div><div class="stat-value">${money(retail)}</div><div class="stat-count">по текущим ценам</div></div><div class="stat-card"><div class="stat-label">Продано за 30 дней</div><div class="stat-value">${sold}</div><div class="stat-count">складских единиц</div></div><div class="stat-card"><div class="stat-label">Накладные за месяц</div><div class="stat-value">${money(month.sum)}</div><div class="stat-count">${month.count} ${pluralInvoice(month.count)}</div></div></div><div class="section-label">Самые продаваемые за 30 дней</div><div class="top-products">${top.length?top.map(([id,q],n)=>{const p=productById(id);return `<div class="top-row"><div><b>${n+1}. ${escapeHtml(p?.name||'Удалённый товар')}</b><div class="muted">${escapeHtml(p?.sku||'')}</div></div><b>${q} шт</b></div>`}).join(''):'<div class="no-history">Продаж складских товаров пока нет.</div>'}</div>`;
 }
 function renderMovements(){
   const q=(document.getElementById('movementSearch')?.value||'').trim().toLowerCase(),box=document.getElementById('movementList');if(!box)return;
   const list=movements.filter(m=>{const p=productById(m.productId),v=variantById(p,m.variantId);return !q||[p?.name,p?.sku,v?.color,m.note,movementLabel(m.type)].join(' ').toLowerCase().includes(q)}).slice(0,300);
-  box.innerHTML=list.length?list.map(m=>{const p=productById(m.productId),v=variantById(p,m.variantId),sign=movementSign(m),dt=new Date(m.dateISO);return `<div class="movement-card"><div class="movement-main"><div><div class="movement-title">${escapeHtml(p?.name||'Удалённый товар')} · ${escapeHtml(v?.color||'вариант')}</div><div class="movement-meta">${movementLabel(m.type)} · ${dt.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}${m.note?' · '+escapeHtml(m.note):''}</div></div><div class="movement-qty ${sign>0?'plus':'minus'}">${sign>0?'+':'−'}${m.qty}</div></div></div>`}).join(''):'<div class="no-history">Движений пока нет.</div>';
+  box.innerHTML=list.length?list.map(m=>{const p=productById(m.productId),v=variantById(p,m.variantId),sign=movementSign(m),dt=new Date(m.dateISO);return `<div class="movement-card"><div class="movement-main"><div><div class="movement-title">${escapeHtml(p?.name||'Удалённый товар')} · ${escapeHtml(v?.color||'вариант')}</div><div class="movement-meta">${movementLabel(m.type)} · ${Number.isFinite(dt.getTime())?dt.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Дата не указана'}${m.note?' · '+escapeHtml(m.note):''}</div></div><div class="movement-qty ${sign>0?'plus':'minus'}">${sign>0?'+':'−'}${m.qty}</div></div></div>`}).join(''):'<div class="no-history">Движений пока нет.</div>';
 }
 function switchWarehouseTab(tab){document.querySelectorAll('.warehouse-tab').forEach(b=>b.classList.toggle('active',b.dataset.wtab===tab));document.getElementById('warehouseStockPane').style.display=tab==='stock'?'block':'none';document.getElementById('warehouseAnalyticsPane').style.display=tab==='analytics'?'block':'none';document.getElementById('warehouseMovesPane').style.display=tab==='moves'?'block':'none';if(tab==='analytics')renderWarehouseAnalytics();if(tab==='moves')renderMovements()}
 function openWarehouse(){renderWarehouse();renderWarehouseAnalytics();renderMovements();document.getElementById('warehouseModal').classList.add('show');document.getElementById('warehouseModal').setAttribute('aria-hidden','false')}
@@ -710,8 +733,9 @@ function closePicker(){const m=document.getElementById('pickerModal');m.classLis
 function openPickerQty(id){const p=productById(id);if(!p)return;pickerProductId=id;document.getElementById('pickerQtyTitle').textContent=p.name;document.getElementById('pickerQtySub').textContent=`${p.sku} · ${productLocation(p)}`;document.getElementById('pickerPrice').value=p.wholesalePrice?String(p.wholesalePrice).replace('.',','):'';const available=p.variants.filter(v=>v.qty>0);document.getElementById('pickerVariantList').innerHTML=available.map(v=>`<div class="multi-variant-row" data-variant-id="${v.id}"><div class="multi-variant-meta"><b>${escapeHtml(v.color)}</b>Доступно: ${v.qty} шт</div><input class="picker-variant-qty" type="number" min="0" max="${v.qty}" step="1" inputmode="numeric" placeholder="0"></div>`).join('');document.getElementById('pickerAvailable').textContent=available.length?`Можно добавить сразу несколько цветов · всего доступно ${available.reduce((a,v)=>a+v.qty,0)} шт`:'Нет товара в наличии';document.getElementById('pickerQtyModal').classList.add('show');document.getElementById('pickerQtyModal').setAttribute('aria-hidden','false')}
 function closePickerQty(){const m=document.getElementById('pickerQtyModal');m.classList.remove('show');m.setAttribute('aria-hidden','true');pickerTargetItemId=null;pickerProductId=null}
 function confirmPicker(){const p=productById(pickerProductId);if(!p)return;const price=document.getElementById('pickerPrice').value.trim(),priceN=parseStrictNumber(price);if(priceN===null||priceN<0){alert('Укажите оптовую цену неотрицательным числом. Если товар бесплатный, введите 0.');return}const selected=[];for(const row of document.querySelectorAll('#pickerVariantList .multi-variant-row')){const v=variantById(p,row.dataset.variantId),raw=row.querySelector('.picker-variant-qty').value.trim();if(!raw)continue;const qty=parseStrictInt(raw,0);if(qty===null){alert(`Некорректное количество для цвета «${v?.color||''}».`);return}if(qty===0)continue;if(!v||qty>v.qty){alert(`На складе недостаточно товара «${v?.color||''}».`);return}selected.push({v,qty})}if(!selected.length){alert('Укажите количество хотя бы для одного цвета.');return}if(pickerTargetItemId){items=items.filter(i=>i.id!==pickerTargetItemId)}for(const {v,qty} of selected)items.push({id:uid(),name:`${p.name} ${p.sku} / ${v.color}`,qty:String(qty),price:String(price),productId:p.id,variantId:v.id,sku:p.sku,color:v.color});render();closePickerQty();closePicker();toast(selected.length>1?`Добавлено цветов: ${selected.length}`:'Товар добавлен в накладную')}
-function hideAllItemSuggestions(){document.querySelectorAll('.item-suggestions').forEach(x=>{x.classList.remove('show');x.innerHTML=''})}
-function renderItemSuggestions(row,item){const box=row.querySelector('.item-suggestions');if(!box)return;const q=String(item.name||'').trim().toLowerCase();if(q.length<2||item.productId){box.classList.remove('show');box.innerHTML='';return}const found=warehouse.filter(p=>productTotal(p)>0&&(`${p.name} ${p.sku}`.toLowerCase().includes(q))).slice(0,5);box.innerHTML=found.map(p=>`<button type="button" class="suggestion-btn stock-suggestion" data-product-id="${p.id}">${escapeHtml(p.name)} <b>${escapeHtml(p.sku)}</b><small>${productTotal(p)} шт · ${escapeHtml(p.category)}</small></button>`).join('');box.classList.toggle('show',!!found.length)}
+function setItemSuggestionsOpen(row,open){const wrap=row?.closest('.swipe-wrap');if(wrap)wrap.classList.toggle('suggestions-open',!!open)}
+function hideAllItemSuggestions(){document.querySelectorAll('.item-suggestions').forEach(x=>{x.classList.remove('show');x.innerHTML='';setItemSuggestionsOpen(x.closest('.row'),false)})}
+function renderItemSuggestions(row,item){const box=row.querySelector('.item-suggestions');if(!box)return;document.querySelectorAll('.item-suggestions').forEach(x=>{if(x===box)return;x.classList.remove('show');x.innerHTML='';setItemSuggestionsOpen(x.closest('.row'),false)});const q=String(item.name||'').trim().toLowerCase();if(q.length<2||item.productId){box.classList.remove('show');box.innerHTML='';setItemSuggestionsOpen(row,false);return}const found=warehouse.filter(p=>productTotal(p)>0&&(`${p.name} ${p.sku}`.toLowerCase().includes(q))).slice(0,5);box.innerHTML=found.map(p=>`<button type="button" class="suggestion-btn stock-suggestion" data-product-id="${p.id}"><span>${escapeHtml(p.name)}</span><small><span class="suggestion-sku">Арт. ${escapeHtml(p.sku)}</span> · ${productTotal(p)} шт · ${escapeHtml(p.category)}</small></button>`).join('');const show=!!found.length;box.classList.toggle('show',show);setItemSuggestionsOpen(row,show)}
 
 
 function exportWarehouseBackup(){
