@@ -1,4 +1,4 @@
-const CACHE='jaan-v11-7-0-features-1';
+const CACHE='jaan-v11-8-0-audited-1';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('jaan-')&&k!==CACHE).map(k=>caches.delete(k)))),self.clients.claim()])));
