@@ -182,7 +182,7 @@
   <div class="print-choice" id="printChoice" aria-hidden="true">
     <div class="print-sheet">
       <h3>Печать накладной</h3>
-      <div id="paperEstimate" role="status" aria-live="polite" aria-live="polite" style="margin:12px 0;color:#475569"></div>
+      <div id="paperEstimate" role="status" aria-live="polite" style="margin:12px 0;color:#475569"></div><button type="button" class="secondary" id="retryPaperEstimate" hidden>Повторить расчёт</button>
       <div class="print-paper-row">
         <button type="button" id="paperA5">A5</button>
         <button type="button" id="paperA4">A4</button>
@@ -577,18 +577,94 @@ function applyPaperEstimate(d){
  document.getElementById('paperEstimate').textContent=`А5: ${d.A5} лист. · А4: ${d.A4} лист. · Рекомендуется ${recommended==='A5'?'А5':'А4'}`;
  if(!paperTouched)selectedPaper=recommended;refreshPrintChoice();
 }
+function estimateAbort(signal){if(signal.aborted)throw new DOMException('Расчёт отменён','AbortError')}
+function estimatePause(ms,signal){
+ estimateAbort(signal);return new Promise((resolve,reject)=>{
+  const done=()=>{signal.removeEventListener('abort',abort);resolve()};
+  const timer=setTimeout(done,ms),abort=()=>{clearTimeout(timer);signal.removeEventListener('abort',abort);reject(new DOMException('Расчёт отменён','AbortError'))};
+  signal.addEventListener('abort',abort,{once:true});
+ });
+}
+function estimateServerOrigin(value){try{return new URL(normalizePrintServer(value)).origin.toLowerCase()}catch{return ''}}
+function chooseEstimateServer(servers,base){
+ const origin=estimateServerOrigin(base);
+ const matches=(Array.isArray(servers)?servers:[]).filter(s=>Array.isArray(s.addresses)&&s.addresses.some(address=>estimateServerOrigin(address)===origin));
+ if(!matches.length)throw new Error('Подключите этот ПК через Setup_Cloud_Estimate.bat. Если он уже подключён, проверьте адрес сервера в форме печати.');
+ const active=matches.filter(s=>Number.isFinite(Date.parse(s.seen_at))&&Date.now()-Date.parse(s.seen_at)<75000);
+ if(!active.length)throw new Error('Компьютер расчёта не в сети. Запустите JAAN Print Server и проверьте интернет на ПК.');
+ if(active.length>1)throw new Error('Найдено несколько компьютеров. Укажите IP нужного ПК в адресе сервера печати.');
+ const server=active[0];if(!server.ready)throw new Error(server.error||'Принтер не готов. Проверьте его на ПК.');return server;
+}
+function pageEstimateError(error){
+ const message=String(error?.message||'');
+ if(message==='invalid-estimate')return 'Сервер вернул неверное число листов. Повторите расчёт.';
+ if(/schema cache|Could not find|does not exist|PGRST20[25]/i.test(message)&&/jaan_estimate/i.test(message))return 'Облачный расчёт ещё не настроен: выполните SUPABASE_PRINT_ESTIMATE.sql в Supabase.';
+ if(/Print server is offline/i.test(message))return 'Компьютер расчёта не в сети. Запустите сервер на ПК.';
+ if(/Printer is not ready/i.test(message))return 'Принтер не готов. Проверьте его на ПК.';
+ if(/queue is full/i.test(message))return 'Очередь расчёта занята. Повторите через несколько секунд.';
+ if(error?.name==='AbortError')return 'Компьютер не успел ответить. Проверьте сервер и интернет, затем повторите расчёт.';
+ if(/Failed to fetch|Load failed|NetworkError/i.test(message))return 'Нет соединения с облаком. Проверьте интернет на телефоне.';
+ return message||'Не удалось получить число листов.';
+}
+async function directPaperEstimate(inv,base,signal){
+ const ac=new AbortController(),abort=()=>ac.abort();signal.addEventListener('abort',abort,{once:true});
+ const timer=setTimeout(()=>ac.abort(),4000);
+ try{
+  estimateAbort(signal);
+  const response=await fetch(base+'/estimate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(inv),signal:ac.signal,credentials:'omit',cache:'no-store'});
+  if(!response.ok)throw new Error('Сервер не смог рассчитать листы.');
+  return await response.json();
+ }finally{clearTimeout(timer);signal.removeEventListener('abort',abort)}
+}
+async function cloudPaperEstimate(inv,base,signal,onProgress=()=>{}){
+ estimateAbort(signal);
+ const owner=cloudUser()?.id;if(!owner)throw new Error('Войдите в облачный аккаунт JAAN Print на телефоне, затем повторите расчёт.');
+ if(!navigator.onLine)throw new Error('Для облачного расчёта нужен интернет на телефоне и ПК.');
+ const api=async(path,options={})=>{
+  estimateAbort(signal);if(cloudUser()?.id!==owner)throw new Error('Облачный аккаунт изменился. Повторите расчёт.');
+  const response=await cloudApi(path,{...options,signal});estimateAbort(signal);
+  if(cloudUser()?.id!==owner)throw new Error('Облачный аккаунт изменился. Повторите расчёт.');return response;
+ };
+ const servers=await (await api('/rest/v1/jaan_estimate_servers?select=id,name,addresses,printer,ready,error,seen_at')).json();
+ const server=chooseEstimateServer(servers,base),id=crypto.randomUUID();let submitted=false;
+ try{
+  estimateAbort(signal);submitted=true;
+  const r=await api('/rest/v1/rpc/jaan_estimate_submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_id:id,p_server_id:server.id,p_invoice:inv})});
+  if(await r.json()!==id)throw new Error('Облако вернуло неверный номер запроса. Повторите расчёт.');
+  onProgress('Ожидаю расчёт на компьютере…');
+  while(true){
+   await estimatePause(1200,signal);
+   const rows=await (await api('/rest/v1/jaan_estimate_jobs?id=eq.'+encodeURIComponent(id)+'&select=id,server_id,status,result,error&limit=1')).json();
+   const job=rows?.[0];if(!job)throw new Error('Запрос расчёта истёк или был отменён. Повторите расчёт.');
+   if(job.id!==id||job.server_id!==server.id)throw new Error('Ответ относится к другому запросу. Повторите расчёт.');
+   if(job.status==='done')return job.result;
+   if(job.status==='error')throw new Error(job.error||'На компьютере произошла ошибка расчёта.');
+   if(job.status==='processing')onProgress('Компьютер рассчитывает листы…');
+  }
+ }finally{
+  // Best-effort cleanup uses a new request: the estimate signal may be aborted.
+  // Expired jobs are also deleted by the server worker and by the next submit.
+  if(submitted&&cloudUser()?.id===owner)cloudApi('/rest/v1/rpc/jaan_estimate_cancel',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_id:id})}).catch(()=>{});
+ }
+}
 async function requestPaperEstimate(inv){
  cancelPaperEstimate();const sequence=estimateSequence,controller=new AbortController();estimateController=controller;
- const el=document.getElementById('paperEstimate');el.textContent='Расчёт через сервер…';
- const timer=setTimeout(()=>controller.abort(),20000);
+ const el=document.getElementById('paperEstimate'),retry=document.getElementById('retryPaperEstimate');retry.hidden=true;
+ const progress=text=>{if(sequence===estimateSequence)el.textContent=text};
+ const timer=setTimeout(()=>controller.abort(),65000);
  try{
   const base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
-  const response=await fetch(base+'/estimate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(inv),signal:controller.signal,credentials:'omit',cache:'no-store'});
-  if(!response.ok)throw new Error('server-estimate');
-  const result=await response.json();if(sequence!==estimateSequence)return;applyPaperEstimate(result);
+  let result;
+  // HTTPS -> local HTTP is blocked in Safari. Go directly over HTTPS to Supabase.
+  if(location.protocol!=='https:'||!/^http:\/\//i.test(base)){
+   progress('Расчёт через сервер…');
+   try{result=await directPaperEstimate(inv,base,controller.signal)}catch(e){estimateAbort(controller.signal)}
+  }
+  if(!result){progress('Подключаюсь к облачному расчёту…');result=await cloudPaperEstimate(inv,base,controller.signal,progress)}
+  estimateAbort(controller.signal);if(sequence!==estimateSequence)return;applyPaperEstimate(result);
  }catch(e){
   if(sequence!==estimateSequence)return;
-  el.textContent=e.name==='AbortError'?'Сервер не ответил вовремя. Выберите формат вручную.':e.message==='invalid-estimate'||e.message==='server-estimate'?'Сервер не смог рассчитать листы. Проверьте принтер и версию сервера. Формат можно выбрать вручную.':'Нет доступа к расчёту: проверьте сервер и доступ браузера к локальной сети. Выберите формат вручную.';
+  el.textContent=pageEstimateError(e)+' Выберите формат вручную или повторите расчёт.';retry.hidden=false;
  }finally{clearTimeout(timer);if(sequence===estimateSequence)estimateController=null}
 }
 function openPrintChoice(){
@@ -620,6 +696,7 @@ http://192.168.31.137:8765`,current);
   if(base)safeSet(PRINT_SERVER_KEY,base);
   paperTouched=false;requestPaperEstimate(currentSnapshot());refreshPrintChoice();
 });
+document.getElementById('retryPaperEstimate').addEventListener('click',()=>requestPaperEstimate(currentSnapshot()));
 document.getElementById('cancelPrint').addEventListener('click',closePrintChoice);
 printChoice.addEventListener('click',e=>{if(e.target===printChoice)closePrintChoice()});
 document.getElementById('confirmPrint').addEventListener('click',async()=>{
@@ -996,7 +1073,7 @@ function renderItemSuggestions(row,item){const box=row.querySelector('.item-sugg
 
 async function exportWarehouseBackup(){
   try{await Promise.all([hydrateCustomerPhotos(true),hydrateAndMigrateProductPhotos(true)])}catch(e){alert('Не удалось прочитать фотографии из внутреннего хранилища Safari. Резервная копия не создана, чтобы не потерять фото.');return}
-  const data={format:'jaan-backup-v1',createdAt:new Date().toISOString(),version:'11.8.0-audited',warehouse,movements,history,customers};
+  const data={format:'jaan-backup-v1',createdAt:new Date().toISOString(),version:'11.8.1-audited',warehouse,movements,history,customers};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`JAAN_backup_${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Резервная копия создана');
 }
 async function importWarehouseBackup(file){
@@ -1066,7 +1143,13 @@ function cloudSetStatus(kind,title,detail=''){
 function cloudRefreshUi(){const signed=!!cloudUser();document.getElementById('cloudSignedOut').style.display=signed?'none':'block';document.getElementById('cloudSignedIn').style.display=signed?'block':'none';if(!signed)cloudSetStatus('',navigator.onLine?'Не подключено':'Нет интернета','Войдите в один аккаунт на обоих телефонах.')}
 function cloudSaveSession(value){cloudSession=value||null;if(cloudSession)localStorage.setItem(CLOUD_SESSION_KEY,JSON.stringify(cloudSession));else localStorage.removeItem(CLOUD_SESSION_KEY);cloudRefreshUi()}
 async function cloudReadError(response){try{const x=await response.json();return x.msg||x.message||x.error_description||x.error||`HTTP ${response.status}`}catch{return `HTTP ${response.status}`}}
-async function cloudFetch(url,options={}){const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),30000);try{const r=await fetch(url,{...options,signal:ac.signal});const body=await r.blob();return new Response([204,205,304].includes(r.status)?null:body,{status:r.status,statusText:r.statusText,headers:r.headers})}finally{clearTimeout(timer)}}
+async function cloudFetch(url,options={}){
+ const ac=new AbortController(),external=options.signal,abort=()=>ac.abort();
+ if(external?.aborted)ac.abort();else external?.addEventListener('abort',abort,{once:true});
+ const timer=setTimeout(()=>ac.abort(),30000);
+ try{const r=await fetch(url,{...options,signal:ac.signal});const body=await r.blob();return new Response([204,205,304].includes(r.status)?null:body,{status:r.status,statusText:r.statusText,headers:r.headers})}
+ finally{clearTimeout(timer);external?.removeEventListener('abort',abort)}
+}
 async function cloudAuthRequest(path,body){const r=await cloudFetch(`${SUPABASE_URL}/auth/v1/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(await cloudReadError(r));return r.json()}
 async function cloudEnsureToken(){
   if(!cloudSession?.access_token)throw new Error('Войдите в облако');
@@ -1105,7 +1188,7 @@ async function cloudBuildState(){
     for(const entity of list){await cloudUploadPhoto(kind,entity);const live=current.find(x=>x.id===entity.id);if(live&&live.photo===entity.photo){live.cloudPhotoPath=entity.cloudPhotoPath;live.photoFingerprint=entity.photoFingerprint}}
   }
   const strip=({localPhotoKey,...x})=>({...x,photo:''});
-  return {...snapshot,format:'jaan-cloud-state-v1',version:'11.8.0',savedAt:new Date().toISOString(),warehouse:snapshot.warehouse.map(strip),customers:snapshot.customers.map(strip),priceHints};
+  return {...snapshot,format:'jaan-cloud-state-v1',version:'11.8.1',savedAt:new Date().toISOString(),warehouse:snapshot.warehouse.map(strip),customers:snapshot.customers.map(strip),priceHints};
 }
 async function cloudGetRemote(metadataOnly=false){const r=await cloudApi(`/rest/v1/jaan_state?select=${metadataOnly?'revision,updated_at':'revision,state,updated_at'}&limit=1`,{headers:{Accept:'application/json'}});const rows=await r.json();return rows[0]||null}
 async function cloudApplyState(state,revision,expectedSeq=cloudChangeSeq){
@@ -1187,7 +1270,7 @@ async function cloudSignIn(mode){
   const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;if(!email||password.length<8){alert('Укажите электронную почту и пароль не короче 8 символов.');return}
   try{cloudSetStatus('syncing',mode==='signup'?'Создание аккаунта…':'Вход…','');const result=await cloudAuthRequest(mode==='signup'?'signup':'token?grant_type=password',{email,password});document.getElementById('cloudPassword').value='';if(!result.access_token){cloudSetStatus('', 'Подтвердите электронную почту','Откройте письмо Supabase, затем вернитесь и нажмите «Войти».');alert('Аккаунт создан. Если пришло письмо Supabase, подтвердите электронную почту, затем нажмите «Войти».');return}cloudSaveSession(result);cloudRevision=0;cloudReady=false;await cloudBootstrap()}catch(e){cloudSetStatus('error',mode==='signup'?'Не удалось создать аккаунт':'Не удалось войти',e.message)}
 }
-async function cloudLogout(){if(cloudSaving||cloudReceiving||cloudRefreshPromise){toast('Дождитесь завершения синхронизации');return}if(!confirm('Выйти из облачного аккаунта на этом телефоне? Локальные данные останутся.'))return;try{if(cloudSession?.access_token)await cloudApi('/auth/v1/logout',{method:'POST'})}catch{}cloudSaveSession(null);cloudReady=false;cloudRevision=0;cloudSetDirty(false);cloudConflictState=null;localStorage.removeItem(CLOUD_REVISION_KEY);localStorage.removeItem(CLOUD_OWNER_KEY);cloudSetStatus('', 'Не подключено','Войдите в один аккаунт на обоих телефонах.')}
+async function cloudLogout(){if(cloudSaving||cloudReceiving||cloudRefreshPromise){toast('Дождитесь завершения синхронизации');return}if(!confirm('Выйти из облачного аккаунта на этом телефоне? Локальные данные останутся.'))return;try{if(cloudSession?.access_token)await cloudApi('/auth/v1/logout?scope=local',{method:'POST'})}catch{}cloudSaveSession(null);cloudReady=false;cloudRevision=0;cloudSetDirty(false);cloudConflictState=null;localStorage.removeItem(CLOUD_REVISION_KEY);localStorage.removeItem(CLOUD_OWNER_KEY);cloudSetStatus('', 'Не подключено','Войдите в один аккаунт на обоих телефонах.')}
 document.getElementById('cloudBtn').addEventListener('click',()=>{const m=document.getElementById('cloudModal');m.classList.add('show');m.setAttribute('aria-hidden','false');cloudRefreshUi()});
 document.getElementById('closeCloud').addEventListener('click',()=>{const m=document.getElementById('cloudModal');m.classList.remove('show');m.setAttribute('aria-hidden','true')});
 document.getElementById('cloudModal').addEventListener('click',e=>{if(e.target===document.getElementById('cloudModal'))document.getElementById('closeCloud').click()});
