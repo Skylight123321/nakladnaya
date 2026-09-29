@@ -71,7 +71,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="top"><div><div class="title">Накладная <small style="font-size:10px;color:#6b7280;font-weight:400">v11.9.2</small></div><div class="sub sale-date-text" id="currentDate"><span id="currentDateText"></span><input class="sale-date-input" type="date" id="saleDateInput" aria-label="Дата продажи"></div></div><div class="top-actions">
+    <div class="top"><div><div class="title">Накладная <small style="font-size:10px;color:#6b7280;font-weight:400">v11.9.3</small></div><div class="sub sale-date-text" id="currentDate"><span id="currentDateText"></span><input class="sale-date-input" type="date" id="saleDateInput" aria-label="Дата продажи"></div></div><div class="top-actions">
       <button class="icon-btn cloud-btn" id="cloudBtn" aria-label="Облачная синхронизация" title="Облачная синхронизация"><svg viewBox="0 0 24 24"><path d="M17.5 19H7a5 5 0 1 1 1.1-9.88A7 7 0 0 1 21 12.5 3.5 3.5 0 0 1 17.5 19z"/><path d="M12 12v7M9 15l3-3 3 3"/></svg></button>
       <button class="icon-btn" id="saveBtn" aria-label="Сохранить накладную" title="Сохранить накладную"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button>
       <button class="icon-btn" id="printBtn" aria-label="Печать" title="Печать накладной"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg></button>
@@ -419,11 +419,15 @@ function currentSnapshot(){
   const cleanItems=items.filter(i=>String(i.name||'').trim() || String(i.qty??'').trim() || String(i.price??'').trim()).map(i=>({name:String(i.name||'').trim(),qty:String(i.qty??''),price:String(i.price??''),productId:i.productId||'',variantId:i.variantId||'',sku:i.sku||'',color:i.color||'',packed:!!i.packed}));
   return {id:uid(),dateISO:new Date().toISOString(),date:dateText(),customer:elName.value.trim(),customerId:currentCustomerId||'',comment:currentComment.trim(),items:cleanItems,debtSummary:snapshotDebtSummary(),subtotal:cents(totalOf(cleanItems))/100,discount:draftExtra.discount,debtAmount:draftExtra.debtAmount,saleDate:draftExtra.saleDate||localDay(new Date()),createdAt:new Date().toISOString(),...saleFields(draftExtra.saleDate||localDay(new Date())),total:(cents(totalOf(cleanItems))-cents(draftExtra.discount))/100};
 }
-function validateInvoiceFields(inv){
-  if(!validSaleDay(inv.saleDate||localDay(invDate(inv)||new Date())) || (inv.saleDate&&inv.saleDate>localDay(new Date())))return {ok:false,message:'Укажите корректную дату продажи не позже сегодняшней.'};
+function validateInvoiceFinance(inv){
   if(Math.abs((inv.discount||0)*100-cents(inv.discount||0))>1e-6||!Number.isFinite(inv.discount??0)||(inv.discount||0)<0||cents(inv.discount||0)>cents(totalOf(inv.items)))return {ok:false,message:'Скидка должна быть от 0 до суммы покупки.'};
   if(Math.abs((inv.debtAmount||0)*100-cents(inv.debtAmount||0))>1e-6||!Number.isFinite(inv.debtAmount??0)||(inv.debtAmount||0)<0||cents(inv.debtAmount||0)>cents(inv.total))return {ok:false,message:'Долг должен быть от 0 до итога после скидки.'};
   if(inv.debtAmount>0&&!resolveCustomerForInvoice(inv,false))return {ok:false,message:'Для долга сначала выберите сохранённого клиента.'};
+  return {ok:true};
+}
+function validateInvoiceFields(inv){
+  if(!validSaleDay(inv.saleDate||localDay(invDate(inv)||new Date())) || (inv.saleDate&&inv.saleDate>localDay(new Date())))return {ok:false,message:'Укажите корректную дату продажи не позже сегодняшней.'};
+  const finance=validateInvoiceFinance(inv);if(!finance.ok)return finance;
   for(let idx=0;idx<(inv.items||[]).length;idx++){
     const i=inv.items[idx],label=`Позиция ${idx+1}`;
     if(!String(i.name||'').trim())return {ok:false,message:`${label}: укажите название товара.`};
@@ -457,7 +461,7 @@ function saveCurrentInvoice(){
     if(!persistCoreAndDraftState()){
       history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;persistCoreAndDraftState();alert('Не удалось сохранить изменения накладной. Все изменения отменены.');historySaveBusy=false;return false;
     }
-    lastSavedFingerprint=invoiceFingerprint(updated);renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();renderMovements();render();toast(updated.stockPosted?'Изменения сохранены · склад пересчитан':'Изменения накладной сохранены');setTimeout(()=>{historySaveBusy=false},600);return true;
+    lastSavedFingerprint=invoiceFingerprint(updated);renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();renderMovements();updateDebtors();render();toast(updated.stockPosted?'Изменения сохранены · склад пересчитан':'Изменения накладной сохранены');setTimeout(()=>{historySaveBusy=false},600);return true;
   }
   const fp=invoiceFingerprint(draft),latestFp=history.length?invoiceFingerprint(history[0]):'';
   const check=validateInvoiceStock(draft);if(!check.ok){historySaveBusy=false;alert(check.message);return false}
@@ -466,7 +470,7 @@ function saveCurrentInvoice(){
   draft.customerId=resolveCustomerForInvoice(draft,true);currentCustomerId=draft.customerId||'';
   draft.createdBy=author;draft.stockPosted=check.lines.length>0;draft.stockLines=check.lines;if(draft.stockPosted)postInvoiceStock(draft,draft.dateISO);history.unshift(draft);touchCustomerForInvoice(draft);setDraftSourceInvoice(draft.id,draft.stockPosted,false);
   if(!persistCoreAndDraftState()){history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;persistCoreAndDraftState();alert('Не удалось сохранить накладную и изменения склада. Память приложения Safari может быть заполнена.');historySaveBusy=false;return false}
-  renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();renderMovements();render();lastSavedFingerprint=invoiceFingerprint(draft);toast(draft.stockPosted?'Накладная сохранена · склад списан':'Сохранено в историю');setTimeout(()=>{historySaveBusy=false},600);
+  renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();renderMovements();updateDebtors();render();lastSavedFingerprint=invoiceFingerprint(draft);toast(draft.stockPosted?'Накладная сохранена · склад списан':'Сохранено в историю');setTimeout(()=>{historySaveBusy=false},600);
   return true;
 }
 document.getElementById('saveBtn').addEventListener('click',()=>saveCurrentInvoice());
@@ -745,7 +749,7 @@ function updateCommentButton(){document.getElementById('commentBtn')?.classList.
 document.getElementById('commentBtn').addEventListener('click',()=>{document.getElementById('commentText').value=currentComment;commentModal.classList.add('show');commentModal.setAttribute('aria-hidden','false');setTimeout(()=>document.getElementById('commentText').focus(),80)});
 document.getElementById('quickCommentChips').addEventListener('click',e=>{const b=e.target.closest('[data-text]');if(!b)return;if(b.dataset.text.trim()==='Скидка'){applyDiscount();return}if(b.dataset.text.trim()==='Долг'){applyInvoiceDebt();return}const ta=document.getElementById('commentText'),text=b.dataset.text.trim(),current=ta.value.trim();const tokens=current.split('·').map(x=>x.trim().toLowerCase()).filter(Boolean);if(!tokens.includes(text.toLowerCase()))ta.value=current?current.replace(/\s+$/,'')+' · '+text:text;ta.focus()});
 document.getElementById('closeComment').addEventListener('click',closeComment);
-document.getElementById('saveComment').addEventListener('click',()=>{currentComment=document.getElementById('commentText').value.trim();syncFinanceFromComment();updateCommentButton();render();save();closeComment();toast(currentComment?'Комментарий добавлен':'Комментарий пуст')});
+document.getElementById('saveComment').addEventListener('click',()=>{const next=document.getElementById('commentText').value.trim(),check=syncFinanceFromComment(next);if(!check.ok){alert(check.message);return}currentComment=next;updateCommentButton();render();save();closeComment();toast(draftSourceInvoiceId?'Комментарий изменён · сохраните накладную':currentComment?'Комментарий добавлен':'Комментарий пуст')});
 document.getElementById('clearComment').addEventListener('click',()=>{document.getElementById('commentText').value='';currentComment='';draftExtra.discount=0;draftExtra.debtAmount=0;updateCommentButton();render();save();});
 commentModal.addEventListener('click',e=>{if(e.target===commentModal)closeComment()});
 function closeComment(){commentModal.classList.remove('show');commentModal.setAttribute('aria-hidden','true')}
@@ -1095,7 +1099,7 @@ function renderItemSuggestions(row,item){const box=row.querySelector('.item-sugg
 
 async function exportWarehouseBackup(){
   try{await Promise.all([hydrateCustomerPhotos(true),hydrateAndMigrateProductPhotos(true)])}catch(e){alert('Не удалось прочитать фотографии из внутреннего хранилища Safari. Резервная копия не создана, чтобы не потерять фото.');return}
-  const data={format:'jaan-backup-v1',createdAt:new Date().toISOString(),version:'11.9.2-audited',warehouse,movements,history,customers};
+  const data={format:'jaan-backup-v1',createdAt:new Date().toISOString(),version:'11.9.3-audited',warehouse,movements,history,customers};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`JAAN_backup_${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Резервная копия создана');
 }
 async function importWarehouseBackup(file){
@@ -1210,7 +1214,7 @@ async function cloudBuildState(){
     for(const entity of list){await cloudUploadPhoto(kind,entity);const live=current.find(x=>x.id===entity.id);if(live&&live.photo===entity.photo){live.cloudPhotoPath=entity.cloudPhotoPath;live.photoFingerprint=entity.photoFingerprint}}
   }
   const strip=({localPhotoKey,...x})=>({...x,photo:''});
-  return {...snapshot,format:'jaan-cloud-state-v1',version:'11.9.2',savedAt:new Date().toISOString(),warehouse:snapshot.warehouse.map(strip),customers:snapshot.customers.map(strip),priceHints};
+  return {...snapshot,format:'jaan-cloud-state-v1',version:'11.9.3',savedAt:new Date().toISOString(),warehouse:snapshot.warehouse.map(strip),customers:snapshot.customers.map(strip),priceHints};
 }
 async function cloudGetRemote(metadataOnly=false){const r=await cloudApi(`/rest/v1/jaan_state?select=${metadataOnly?'revision,updated_at':'revision,state,updated_at'}&limit=1`,{headers:{Accept:'application/json'}});const rows=await r.json();return rows[0]||null}
 async function cloudApplyState(state,revision,expectedSeq=cloudChangeSeq){
@@ -1315,7 +1319,7 @@ elName.addEventListener('input',renderCustomerSuggestions);document.getElementBy
 document.getElementById('deviceNickname').value=localStorage.getItem('jaan-device-name')||'';
 document.getElementById('saveNickname').addEventListener('click',()=>{const name=document.getElementById('deviceNickname').value.trim().slice(0,40);if(!name){toast('Введите имя устройства');return}if(safeSet('jaan-device-name',name))toast('Имя устройства сохранено')});
 for(const id of ['customerSort','customerPeriod']){const el=document.getElementById(id);el.value=localStorage.getItem('jaan-'+id)||(id==='customerSort'?'recent':'all');el.addEventListener('change',()=>{safeSet('jaan-'+id,el.value);renderCustomerList()})}
-// JAAN 11.9.2: iOS date picker and compact debt-history fixes.
+// JAAN 11.9.3: finance comment synchronization and debt-ledger refresh.
 let activeFinanceCustomer='',historyRangeStart='',historyRangeEnd='',rangeCalendarMonth=null,rangeDraftStart='',rangeDraftEnd='';
 function cents(n){return Math.round((Number(n)||0)*100)}
 function invoiceAmount(inv){return inv.total!==null&&inv.total!==undefined&&Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(inv.items||[])}
@@ -1349,7 +1353,18 @@ function debtComment(text,n){
  let rest=simple.test(text.trim())?'':text.replace(/\d+(?:[.,]\d+)?\s*р\s*·\s*Долг/gi,'').trim().replace(/^[\s·]+|[\s·]+$/g,'');
  return [rest,n?money(n)+'р · Долг':''].filter(Boolean).join(' · ');
 }
-function syncFinanceFromComment(){if(!/Скидка/i.test(currentComment))draftExtra.discount=0;if(!/Долг/i.test(currentComment))draftExtra.debtAmount=0}
+function financeMarkerValues(text,label){
+ const num='([+-]?\\d+(?:[.,]\\d+)?)',rub='\\s*(?:р(?:уб(?:ля|лей|ль)?)?\\.?)?',suffix=new RegExp(num+rub+'\\s*(?:·\\s*)?'+label,'gi'),prefix=new RegExp(label+'\\s*[:—-]?\\s*'+num+rub,'gi'),values=[];
+ for(const re of [suffix,prefix])for(const match of String(text).matchAll(re)){const value=Number(match[1].replace(',','.'));if(Number.isFinite(value))values.push(value)}
+ return values;
+}
+function syncFinanceFromComment(text=currentComment){
+ const discounts=financeMarkerValues(text,'Скидка'),debts=financeMarkerValues(text,'Долг');
+ if(discounts.length>1)return {ok:false,message:'В комментарии указано несколько скидок. Оставьте одну сумму скидки.'};
+ if(debts.length>1)return {ok:false,message:'В комментарии указано несколько сумм долга. Оставьте одну сумму долга.'};
+ const discount=discounts.length?cents(discounts[0])/100:0,debtAmount=debts.length?cents(debts[0])/100:0,snapshot=currentSnapshot(),candidate={...snapshot,discount,debtAmount,total:(cents(snapshot.subtotal)-cents(discount))/100},check=validateInvoiceFinance(candidate);
+ if(!check.ok)return check;draftExtra.discount=discount;draftExtra.debtAmount=debtAmount;return {ok:true};
+}
 function applyDiscount(){const ta=document.getElementById('commentText'),parsed=parseFinanceAction(ta.value,'Скидка');let n=parsed?.value,base=parsed?.base??ta.value;if(!parsed)n=askAmount('Размер скидки',draftExtra.discount,totalOf(items));else if(n<0||cents(n)>cents(totalOf(items))||Math.abs(n*100-cents(n))>1e-6){alert('Некорректная скидка. Она не может быть отрицательной или больше покупки.');return}if(n===null)return;draftExtra.discount=cents(n)/100;ta.value=discountComment(base,n);currentComment=ta.value;updateCommentButton();render();save()}
 function applyInvoiceDebt(){if(!currentCustomerId||!customerById(currentCustomerId)){alert('Сначала выберите сохранённого клиента.');return}const ta=document.getElementById('commentText'),parsed=parseFinanceAction(ta.value,'Долг');let n=parsed?.value,base=parsed?.base??ta.value,max=(cents(totalOf(items))-cents(draftExtra.discount))/100;if(!parsed)n=askAmount('Оставить в долг по этой покупке',draftExtra.debtAmount,max);if(n===null)return;if(n<0||n>max||Math.abs(n*100-cents(n))>1e-6){alert('Долг не может превышать итог покупки.');return}draftExtra.debtAmount=cents(n)/100;ta.value=debtComment(base,n);currentComment=ta.value;updateCommentButton();render();save();toast(n?'Долг добавлен в комментарий':'Долг убран')}
 function historyDateMatches(inv){const d=invDate(inv);if(!d)return !historyRangeStart&&!historyRangeEnd;const day=localDay(d);return (!historyRangeStart||day>=historyRangeStart)&&(!historyRangeEnd||day<=historyRangeEnd)}
