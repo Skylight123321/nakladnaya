@@ -1,5 +1,5 @@
-const CACHE='jaan-v11-10-2-pdf-catalogue-1';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./catalog-pdf.js','./vendor/pdf-lib.min.js','./vendor/fontkit.umd.min.js','./fonts/LiberationSans-Regular.ttf','./fonts/LiberationSans-Bold.ttf'];
+const CACHE='jaan-v11-11-0-excel-1';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./catalog-pdf.js','./warehouse-excel.js','./warehouse-excel-worker.js','./warehouse-excel-ui.js','./vendor/xlsx.mini.min.js','./vendor/pdf-lib.min.js','./vendor/fontkit.umd.min.js','./fonts/LiberationSans-Regular.ttf','./fonts/LiberationSans-Bold.ttf'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('jaan-')&&k!==CACHE).map(k=>caches.delete(k)))),self.clients.claim()])));
 self.addEventListener('fetch',e=>{
