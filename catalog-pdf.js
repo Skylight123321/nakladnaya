@@ -23,13 +23,24 @@
     return assetsPromise;
   }
   const color=value=>{const n=String(value).match(/[\d.]+/g);return n&&n.length>=3?n.slice(0,3).map(x=>Number(x)/255):[0,0,0]};
+  function pageFits(element){
+    const table=element.querySelector('table'),wrap=element.querySelector('.catalog-table-wrap'),footer=element.querySelector('.catalog-footer');
+    if(!table||!wrap||!footer)return false;
+    const p=element.getBoundingClientRect(),t=table.getBoundingClientRect(),w=wrap.getBoundingClientRect(),f=footer.getBoundingClientRect(),scale=p.width/(210*96/25.4);
+    // Leave a rounding reserve inside the table area and a real gap before the footer.
+    return t.top>=w.top-scale&&t.bottom<=Math.min(w.bottom-2*scale,f.top-8*scale)&&t.left>=w.left-scale&&t.right<=w.right+scale;
+  }
   function capturePage(element){
     const box=element.getBoundingClientRect(),px=.75,out={text:[],cells:[],images:[]};
+    if(Math.abs(box.width-210*96/25.4)>1||Math.abs(box.height-297*96/25.4)>1)throw Error('Разметка А4 изменилась. Закройте предпросмотр и сформируйте каталог заново.');
+    if(!pageFits(element))throw Error('Таблица выходит за границы листа. Сформируйте каталог заново.');
     for(const cell of element.querySelectorAll('th,td')){const r=cell.getBoundingClientRect(),style=getComputedStyle(cell);out.cells.push({x:(r.left-box.left)*px,top:(r.top-box.top)*px,w:r.width*px,h:r.height*px,fill:cell.tagName==='TH'?color(style.backgroundColor):null,line:color(style.borderBottomColor),lineWidth:(parseFloat(style.borderBottomWidth)||0)*px})}
     const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT),range=document.createRange();let node;
     while((node=walker.nextNode())){
-      if(!node.data.trim())continue;const style=getComputedStyle(node.parentElement),size=parseFloat(style.fontSize)*px,bold=Number(style.fontWeight)>=600||style.fontWeight==='bold';let group=null,index=0;
-      for(const character of node.data){range.setStart(node,index);index+=character.length;range.setEnd(node,index);const r=range.getBoundingClientRect();if(!r.width||!r.height)continue;const top=(r.top-box.top)*px;
+      if(!node.data.trim())continue;const style=getComputedStyle(node.parentElement),size=parseFloat(style.fontSize)*px,bold=Number(style.fontWeight)>=600||style.fontWeight==='bold',cell=node.parentElement.closest('th,td'),bounds=(cell||element).getBoundingClientRect();let group=null,index=0;
+      for(const character of node.data){range.setStart(node,index);index+=character.length;range.setEnd(node,index);const r=range.getBoundingClientRect();if(!r.width||!r.height)continue;
+        if(r.left<bounds.left-1||r.right>bounds.right+1||r.top<bounds.top-1||r.bottom>bounds.bottom+1)throw Error('Текст выходит за границы строки. Сформируйте каталог заново.');
+        const top=(r.top-box.top)*px;
         if(!group||Math.abs(top-group.top)>.4){group={text:'',x:(r.left-box.left)*px,top,size,bold,color:color(style.color)};out.text.push(group)}group.text+=character;
       }
     }
@@ -53,5 +64,5 @@
     const date=new Date(),pad=n=>String(n).padStart(2,'0'),name='JAAN_catalog_'+date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate())+'_'+pad(date.getHours())+'-'+pad(date.getMinutes())+'-'+pad(date.getSeconds())+'.pdf';
     return {bytes:data,base64:base64(data),file:new File([data],name,{type:'application/pdf'}),pageCount:pages.length};
   }
-  window.JaanCataloguePdf={prepare,create};
+  window.JaanCataloguePdf={prepare,create,pageFits};
 })();
