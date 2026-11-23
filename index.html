@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000000"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Calculator"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="referrer" content="no-referrer">
-<title>Calculator</title><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-ios27-180.png"><link rel="icon" href="icon.svg"><link rel="stylesheet" href="vault.css?v=12.0.1">
+<meta name="theme-color" content="#000000"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Calculator"><meta name="referrer" content="no-referrer">
+<title>Calculator</title><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-ios27-180.png"><link rel="icon" href="icon.svg"><link rel="stylesheet" href="vault.css?v=12.1.0">
 </head><body>
 <main id="calculator" aria-label="Калькулятор">
  <div class="calc-top">
@@ -36,5 +36,5 @@
 <div id="appHost" hidden></div>
 <dialog id="vaultDialog"><form id="vaultForm" method="dialog"><div class="dialog-head"><h1 id="dialogTitle"></h1><button id="closeVaultDialog" type="button" aria-label="Закрыть">×</button></div><div id="dialogBody"></div><p id="dialogError" role="alert"></p><button id="dialogSubmit" class="primary" type="submit">Продолжить</button></form></dialog>
 <noscript>Включите JavaScript для работы калькулятора.</noscript>
-<script src="vault-crypto.js"></script><script src="vault-store.js"></script><script src="vault-shell.js"></script>
+<script src="viewport.js"></script><script src="vault-crypto.js"></script><script src="vault-store.js"></script><script src="vault-cloud.js"></script><script src="vault-shell.js"></script>
 </body></html>

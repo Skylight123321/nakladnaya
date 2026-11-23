@@ -18,5 +18,6 @@
  }
  async function unlock(meta,text,useRecovery=false){if(!meta||typeof meta.id!=='string'||meta.id.length>100)throw Error('Некорректные параметры ключа');const k=useRecovery?await recoveryKey(text):await passwordKey(text,meta.kdf.salt,meta.kdf.iterations);return unb64(await open(k,useRecovery?meta.recovery:meta.code,(useRecovery?'jaan-wrap-recovery-v1|':'jaan-wrap-code-v1|')+meta.id),32)}
  async function recode(meta,raw,code){const salt=b64(bytes(16));return {...meta,kdf:{salt,iterations:ITERATIONS},code:await seal(await passwordKey(code,salt),b64(raw),'jaan-wrap-code-v1|'+meta.id)}}
- return {ITERATIONS,bytes,b64,unb64,key,passwordKey,seal,open,recovery,recoveryKey,access,unlock,recode};
+ async function renewRecovery(meta,raw,text){return {...meta,recovery:await seal(await recoveryKey(text),b64(raw),'jaan-wrap-recovery-v1|'+meta.id)}}
+ return {ITERATIONS,bytes,b64,unb64,key,passwordKey,seal,open,recovery,recoveryKey,access,unlock,recode,renewRecovery};
 });
