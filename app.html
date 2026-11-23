@@ -15,16 +15,27 @@
     :root { --bg:#f6f7f9; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#0F2A4A; --danger:#b91c1c; --jaan-blue:#0F2A4A; }
     *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;color:var(--text)}
     html,body{min-height:100%;background:#f6f7f9;color-scheme:light}
-    .cloud-device-profile{margin:14px 0}.cloud-device-profile label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.cloud-device-profile select{width:100%;padding:11px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font:inherit;font-size:16px;min-width:0}
-    :root{--jaan-control-padding:11px}html[data-device-size="compact"]{--jaan-control-padding:9px}html[data-device-size="large"]{--jaan-control-padding:12px}
     @media(max-width:600px){.top{flex-wrap:wrap;gap:10px}.top-actions{margin-left:auto;flex-wrap:wrap}.sheet{max-height:92dvh}}
-    .app{max-width:760px;margin:0 auto;padding:calc(var(--jaan-safe-top, env(safe-area-inset-top, 0px)) + 18px) 14px calc(var(--jaan-safe-bottom, env(safe-area-inset-bottom, 0px)) + 28px)}
+    html{overscroll-behavior:none;overflow-anchor:none}
+    .app {
+      max-width:760px;
+      margin:0 auto;
+      padding:calc(var(--jaan-safe-top,0px) + 14px) max(14px,var(--jaan-safe-right,0px))
+              calc(var(--jaan-safe-bottom,0px) + 28px) max(14px,var(--jaan-safe-left,0px));
+    }
+    .app > .top {
+      position:sticky;
+      top:var(--jaan-safe-top,0px);
+      z-index:3;
+      padding:6px 0;
+      background:var(--bg);
+    }
     .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.title{font-size:28px;font-weight:800;letter-spacing:-.02em}.sub{font-size:13px;color:var(--muted);margin-top:3px}.shop-info{text-align:center;color:var(--muted);font-size:11px;line-height:1.45;margin-top:10px;padding-bottom:2px}
     .top-actions{display:flex;gap:8px;align-items:center}.icon-btn{width:42px;height:42px;padding:0;border:1px solid var(--line);background:#fff;color:var(--jaan-blue);border-radius:12px;display:grid;place-items:center}.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.icon-btn:active{background:#eef3f8}.icon-btn.has-comment{background:#eef3f8;border-color:#cbd5e1;color:var(--jaan-blue)}.customer-tools{display:flex;gap:8px;align-items:center}
     .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 2px 12px rgba(15,23,42,.04)}
     .customer-wrap{margin-bottom:12px}.customer-line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.customer-wrap label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 6px 2px}.customer{font-size:16px}
     .swipe-wrap{position:relative;overflow:hidden;border-bottom:1px solid var(--line);border-radius:0;isolation:isolate}.swipe-wrap.suggestions-open{overflow:visible;z-index:40;isolation:auto}.swipe-wrap:last-child{border-bottom:0}.swipe-action{position:absolute;top:0;bottom:0;width:78px;display:grid;place-items:center;z-index:0}.swipe-action.delete-action{right:0;background:#fee2e2}.swipe-action.pack-action{left:0;background:#dcfce7;color:#15803d;font-size:25px;font-weight:900}.swipe-delete{width:100%;height:100%;border-radius:0;background:#fee2e2;color:var(--danger);display:grid;place-items:center;padding:0}.swipe-delete svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.row{position:relative;z-index:1;display:grid;grid-template-columns:1.3fr .7fr .9fr;gap:8px;align-items:center;padding:10px 0;background:#fff;transform:translateX(0);transition:transform .22s cubic-bezier(.2,.8,.2,1),background-color .2s ease,border-color .2s ease;touch-action:pan-y}.row.swiping{transition:none}.swipe-wrap.packed .row{background:#f0fdf4}.swipe-wrap.packed{box-shadow:inset 3px 0 0 #22c55e}.swipe-wrap.removing{animation:collapseRow .22s ease forwards;pointer-events:none}
-    input{width:100%;border:1px solid var(--line);border-radius:12px;padding:var(--jaan-control-padding,11px) 12px;font-size:16px;background:#fff;outline:none} input:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}
+    input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:16px;background:#fff;outline:none} input:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}
     .sum{grid-column:1/-1;font-variant-numeric:tabular-nums;font-weight:700;text-align:right;white-space:nowrap;transition:opacity .16s ease}
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}#addBtn{background:var(--jaan-blue);color:#fff}.invoice-tools{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:10px}.sort-controls{display:flex;gap:7px;align-items:center}.sort-controls select{min-width:0;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:13px}.sort-controls button{padding:10px 12px;font-size:13px}.packing-summary{font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}.packing-summary.complete{color:#15803d;font-weight:700} button{font:inherit;border:0;border-radius:14px;padding:13px 14px;font-weight:700;transition:transform .16s ease,opacity .16s ease,background-color .16s ease,box-shadow .16s ease}button:active{transform:scale(.975)}.primary{background:var(--accent);color:#fff}.primary:disabled{opacity:.48;cursor:not-allowed}.secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
     .clear-control{display:grid;min-height:47px;position:relative}.clear-control>*{grid-area:1/1}.clear-main{width:100%;opacity:1;transform:scale(1);transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1)}.clear-confirm{display:grid;grid-template-columns:1fr 1fr;gap:8px;opacity:0;transform:scale(.9);pointer-events:none;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1)}.clear-control.armed .clear-main{opacity:0;transform:scale(.88);pointer-events:none}.clear-control.armed .clear-confirm{opacity:1;transform:scale(1);pointer-events:auto}.clear-cancel,.clear-ok{padding:0;min-height:47px;font-size:23px}.clear-cancel{background:#fff;border:1px solid var(--line);color:#4b5563}.clear-ok{background:var(--jaan-blue);color:#fff}
@@ -95,12 +106,33 @@
 .catalog-page,.catalog-page *{-webkit-text-size-adjust:none;text-size-adjust:none}
 .catalog-page .catalog-product{font-size:9pt;line-height:1.25}
 .catalog-page .catalog-product span{font-size:9pt;line-height:1.25}
+    @media(max-width:760px),(pointer:coarse) and (max-height:550px) {
+      #warehouseModal > .warehouse-sheet {
+        width:100%;
+        height:100%;
+        max-height:none;
+        border-radius:0;
+        overscroll-behavior:contain;
+        overflow-anchor:none;
+        padding-top:calc(var(--jaan-safe-top,0px) + 8px);
+        padding-right:max(14px,var(--jaan-safe-right,0px));
+        padding-left:max(14px,var(--jaan-safe-left,0px));
+      }
+      .warehouse-sheet > .sheet-head {
+        position:sticky;
+        top:var(--jaan-safe-top,0px);
+        z-index:1;
+        padding:6px 0;
+        background:var(--bg);
+      }
+      #warehouseModal.show .warehouse-sheet {animation:none}
+    }
 </style>
 
 </head>
 <body>
   <main class="app">
-    <div class="top"><div><div class="title">Накладная <small style="font-size:10px;color:#6b7280;font-weight:400">v12.1.0</small></div><div class="sub sale-date-text" id="currentDate"><span id="currentDateText"></span><input class="sale-date-input" type="date" id="saleDateInput" aria-label="Дата продажи"></div></div><div class="top-actions">
+    <div class="top"><div><div class="title">Накладная <small style="font-size:10px;color:#6b7280;font-weight:400">v12.1.1</small></div><div class="sub sale-date-text" id="currentDate"><span id="currentDateText"></span><input class="sale-date-input" type="date" id="saleDateInput" aria-label="Дата продажи"></div></div><div class="top-actions">
       <button class="icon-btn cloud-btn" id="cloudBtn" aria-label="Облачная синхронизация" title="Облачная синхронизация"><svg viewBox="0 0 24 24"><path d="M17.5 19H7a5 5 0 1 1 1.1-9.88A7 7 0 0 1 21 12.5 3.5 3.5 0 0 1 17.5 19z"/><path d="M12 12v7M9 15l3-3 3 3"/></svg></button>
       <button class="icon-btn" id="saveBtn" aria-label="Сохранить накладную" title="Сохранить накладную"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button>
       <button class="icon-btn" id="printBtn" aria-label="Печать" title="Печать накладной"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg></button>
@@ -246,7 +278,7 @@
 <script src="catalog-pdf.js"></script>
 <script src="warehouse-excel.js"></script>
 <script>
-const APP_VERSION='12.1.0';
+const APP_VERSION='12.1.1';
 const STORAGE_KEY='invoice-calc-items-v1';
 const NAME_KEY='invoice-calc-customer-v1';
 const HISTORY_KEY='invoice-calc-history-v1';

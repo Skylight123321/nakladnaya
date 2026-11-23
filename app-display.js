@@ -1,10 +1,10 @@
 (function(){
  'use strict';
- const viewport=parent.JaanViewport;
- if(viewport){
-  const group=document.createElement('div');group.className='cloud-device-profile';group.innerHTML='<label for="screenProfile">Модель устройства</label><select id="screenProfile"></select><p class="cloud-note">«Авто» подстраивается под экран, поворот и клавиатуру. Выбор сохраняется только на этом устройстве.</p>';
-  document.querySelector('#cloudModal .cloud-auth-fields').after(group);const select=group.querySelector('select');for(const p of viewport.profiles)select.add(new Option(p.label,p.id));select.value=viewport.profile;
-  select.onchange=()=>{try{viewport.setProfile(select.value);toast('Настройка экрана сохранена')}catch(e){select.value=viewport.profile;toast('Не удалось сохранить настройку экрана')}};
+ const viewport = parent.JaanViewport;
+ if (viewport) {
+  history.scrollRestoration = 'manual';
+  document.addEventListener('focusin', viewport.update);
+  document.addEventListener('focusout', () => requestAnimationFrame(viewport.update));
   viewport.update();
  }
  window.jaanCloudKeyAccount=()=>cloudUser()?{owner:cloudUser().id,email:cloudUser().email||''}:null;

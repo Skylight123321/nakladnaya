@@ -1,30 +1,60 @@
-/* Display preferences contain no business data or unlocking material. */
-(function(){
- 'use strict';
- const key='calculator-display-profile-v1',profiles=[{id:'auto',label:'Авто',size:'auto'}];
- for(const generation of [13,14,15,16,17,18]){
-  const variants=generation===13?['','mini','Pro','Pro Max']:generation<=15?['','Plus','Pro','Pro Max']:generation===16?['','Plus','e','Pro','Pro Max']:generation===17?['','e','Pro','Pro Max']:['Pro','Pro Max'];
-  for(const variant of variants)profiles.push({id:'iphone-'+generation+(variant?'-'+variant.toLowerCase().replace(' ','-'):''),label:'iPhone '+generation+(variant==='e'?'e':variant?' '+variant:''),size:variant==='mini'?'compact':variant.includes('Max')||variant==='Plus'?'large':'standard'});
- }
- profiles.push({id:'iphone-air',label:'iPhone Air',size:'large'},{id:'iphone-duo',label:'iPhone Duo',size:'large'});
- let selected='auto';try{const saved=localStorage.getItem(key);if(profiles.some(p=>p.id===saved))selected=saved}catch{}
- const root=document.documentElement;let screenMode='calculator';
- function frame(){return document.querySelector('#appHost iframe')}
- function update(){
-  const profile=profiles.find(p=>p.id===selected);root.dataset.deviceProfile=selected;root.dataset.deviceSize=profile.size;
-  const visual=window.visualViewport,height=visual&&Math.abs(visual.scale-1)<.01?Math.min(window.innerHeight,visual.height):window.innerHeight;root.style.setProperty('--jaan-viewport-height',height+'px');
-  const computed=getComputedStyle(root),top=parseFloat(computed.getPropertyValue('--jaan-env-top'))||0,bottom=parseFloat(computed.getPropertyValue('--jaan-env-bottom'))||0;
-  const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches,landscape=innerWidth>innerHeight;
-  const screenHeight=landscape?Math.min(screen.width,screen.height):Math.max(screen.width,screen.height),missing=screenHeight-window.innerHeight;
-  let safeTop=top,safeBottom=bottom;
-  // Some iOS installations already reserve the status-bar band. Only
-  // compensate a measured exact system inset; never use a model's pixels.
-  if(standalone&&top>0&&Math.abs(missing-top)<3)safeTop=0;
-  else if(standalone&&top+bottom>0&&Math.abs(missing-top-bottom)<3){safeTop=0;safeBottom=0}
-  root.style.setProperty('--jaan-safe-top',safeTop+'px');root.style.setProperty('--jaan-safe-bottom',safeBottom+'px');
-  const child=frame()?.contentDocument?.documentElement;if(child){child.style.setProperty('--jaan-safe-top',safeTop+'px');child.style.setProperty('--jaan-safe-bottom',safeBottom+'px');child.dataset.deviceProfile=selected;child.dataset.deviceSize=profile.size;const select=child.ownerDocument.getElementById('screenProfile');if(select)select.value=selected}
- }
- function mode(value){screenMode=value;root.dataset.screen=value;root.style.colorScheme=value==='app'?'light':'dark';const color=value==='app'?'#f6f7f9':'#000000';document.querySelector('meta[name="theme-color"]')?.setAttribute('content',color);update()}
- window.JaanViewport={profiles,get profile(){return selected},setProfile(value){if(!profiles.some(p=>p.id===value))throw Error('Выберите устройство из списка');localStorage.setItem(key,value);selected=value;update();window.dispatchEvent(new Event('jaanviewportchange'))},mode,update};
- window.addEventListener('resize',update);window.addEventListener('orientationchange',()=>requestAnimationFrame(update));window.visualViewport?.addEventListener('resize',update);window.addEventListener('pageshow',()=>mode(screenMode));mode('calculator');
+(function () {
+  'use strict';
+
+  const root = document.documentElement;
+  const visual = window.visualViewport;
+  let screenMode = 'calculator';
+  history.scrollRestoration = 'manual';
+
+  function update() {
+    const frame = document.querySelector('#appHost iframe');
+    const child = frame?.contentDocument;
+    const style = getComputedStyle(root);
+    for (const side of ['top', 'bottom', 'left', 'right']) {
+      const inset = parseFloat(style.getPropertyValue('--jaan-env-' + side)) || 0;
+      root.style.setProperty('--jaan-safe-' + side, inset + 'px');
+      child?.documentElement?.style.setProperty('--jaan-safe-' + side, inset + 'px');
+    }
+
+    const atDefaultScale = visual && Math.abs(visual.scale - 1) < 0.01;
+    const focused = document.activeElement === frame ? child?.activeElement : document.activeElement;
+    const editing = focused?.matches(
+      'textarea:not([readonly]), input:not([readonly]):not([type=button]):not([type=checkbox]):not([type=file]), [contenteditable="true"]'
+    );
+    // Keep the CSS viewport at normal size. A smaller visual viewport can
+    // reflect system chrome, so only use it to fit an open software keyboard.
+    const keyboard = atDefaultScale && editing && innerHeight - visual.height > 80;
+    if (keyboard) {
+      root.style.setProperty('--jaan-keyboard-height', visual.height + 'px');
+    } else {
+      root.style.removeProperty('--jaan-keyboard-height');
+    }
+
+    // Safari can pan the visual viewport without scrolling the document.
+    // Move the app with that viewport while leaving the invoice's scroll alone.
+    const offset = screenMode === 'app' && atDefaultScale ? Math.max(0, visual.offsetTop || 0) : 0;
+    root.style.setProperty('--jaan-viewport-top', offset + 'px');
+  }
+
+  function mode(value) {
+    screenMode = value;
+    root.dataset.screen = value;
+    root.style.colorScheme = value === 'app' ? 'light' : 'dark';
+    const color = value === 'app' ? '#f6f7f9' : '#000000';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color);
+    update();
+  }
+
+  window.JaanViewport = { mode, update };
+  window.addEventListener('resize', update);
+  window.addEventListener('orientationchange', () => requestAnimationFrame(update));
+  window.addEventListener('pageshow', () => mode(screenMode));
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) requestAnimationFrame(update);
+  });
+  document.addEventListener('focusin', update);
+  document.addEventListener('focusout', () => requestAnimationFrame(update));
+  visual?.addEventListener('resize', update);
+  visual?.addEventListener('scroll', update);
+  mode('calculator');
 })();
