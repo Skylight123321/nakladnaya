@@ -23,7 +23,19 @@
  };
  const title=document.querySelector('.title'),lock=document.createElement('button');lock.id='vaultLockBtn';lock.type='button';lock.setAttribute('aria-label','Скрыть накладную');lock.title='Скрыть накладную';lock.innerHTML='<svg width="17" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>';lock.style.cssText='padding:3px 7px;margin-left:5px;font-size:20px;color:#64748b;background:none';lock.onclick=()=>JaanVault.lock();title.append(lock);
  const security=document.createElement('button');security.id='vaultSettingsBtn';security.type='button';security.className='secondary';security.textContent='Защита данных';security.onclick=()=>JaanVault.settings();document.querySelector('#cloudModal .sheet').append(security);
- const pair=document.createElement('button');pair.id='pairPrinterBtn';pair.type='button';pair.className='secondary';pair.textContent='Подключить защищённую печать';pair.style.cssText='width:100%;margin-top:10px';pair.onclick=async()=>{const base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER),value=prompt('Ключ подключения из окна JAAN Print Server на компьютере. Передавайте его только своим устройствам.');if(value===null)return;try{await JaanVault.pairPrinter(base,value);toast('Ключ принтера сохранён');requestPaperEstimate(currentSnapshot())}catch{alert('Проверьте ключ подключения: скопируйте его целиком из окна сервера.')}};document.getElementById('changePrintServer').after(pair);
+ const pair=document.getElementById('pairPrinterBtn');
+ pair.onclick=async()=>{
+  const base=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
+  const value=prompt('Ключ подключения из окна JAAN Print Server на компьютере. Передавайте его только своим устройствам.');
+  if(value===null)return;
+  pair.disabled=true;
+  try{
+   await JaanVault.pairPrinter(base,value);
+   toast('Ключ принтера сохранён');
+   if(printChoice.classList.contains('show')&&base===normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER))requestPaperEstimate(currentSnapshot());
+  }catch(e){alert('Не удалось сохранить ключ подключения. Скопируйте его целиком из окна сервера и повторите. '+(e.message||''))}
+  finally{pair.disabled=false}
+ };
  const editorKey='jaan-editor-draft-v1';
  function rememberEditor(){if(document.getElementById('productModal').classList.contains('show'))localStorage.setItem(editorKey,JSON.stringify({kind:'product',editingProductId,snapshot:JSON.parse(productFormSnapshot())}));else if(document.getElementById('customerEditModal').classList.contains('show'))localStorage.setItem(editorKey,JSON.stringify({kind:'customer',editingCustomerId,name:document.getElementById('customerEditName').value,phone:document.getElementById('customerPhone').value,city:document.getElementById('customerCity').value,note:document.getElementById('customerNote').value,photo:customerDraftPhoto}));else localStorage.removeItem(editorKey)}
  window.jaanPrepareSuspend=()=>{save();rememberEditor()};

@@ -19,6 +19,7 @@
     html{overscroll-behavior:none;overflow-anchor:none}
     .app {
       max-width:760px;
+      isolation:isolate;
       margin:0 auto;
       padding:calc(var(--jaan-safe-top,0px) + 14px) max(14px,var(--jaan-safe-right,0px))
               calc(var(--jaan-safe-bottom,0px) + 28px) max(14px,var(--jaan-safe-left,0px));
@@ -26,7 +27,7 @@
     .app > .top {
       position:sticky;
       top:var(--jaan-safe-top,0px);
-      z-index:3;
+      z-index:50;
       padding:6px 0;
       background:var(--bg);
     }
@@ -44,20 +45,42 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes sheetIn{from{transform:translateY(18px);opacity:.7}to{transform:translateY(0);opacity:1}}@keyframes collapseRow{0%{opacity:1;max-height:120px;transform:scale(1)}100%{opacity:0;max-height:0;transform:scale(.98)}}
     .animate-in{animation:fadeUp .24s cubic-bezier(.2,.8,.2,1) both}.modal.show .sheet,.print-choice.show .print-sheet{animation:sheetIn .26s cubic-bezier(.2,.8,.2,1)}
     .search-wrap{margin-bottom:12px}.search-wrap input{background:#fff}.history-footer{font-size:12px;color:var(--muted);text-align:center;padding:9px 4px 2px}.edit-mode-note{display:none;margin:0 0 10px;padding:9px 11px;border-radius:12px;background:#eef3f8;color:var(--jaan-blue);font-size:12px;font-weight:700}.edit-mode-note.show{display:block}.comment-area{width:100%;min-height:130px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:16px;outline:none}.comment-area:focus{border-color:#9ca3af;box-shadow:0 0 0 3px rgba(17,24,39,.06)}.comment-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-value{font-size:22px;font-weight:800;margin-top:6px}.stat-count{font-size:12px;color:var(--muted);margin-top:4px}.history-comment{font-size:12px;color:#4b5563;margin-top:7px;line-height:1.35}.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}.modal.show{display:flex}.sheet{background:#f6f7f9;width:min(760px,100%);max-height:min(92dvh,calc(100dvh - var(--jaan-safe-top,0px) - 12px));border-radius:22px 22px 0 0;padding:14px 14px calc(var(--jaan-safe-bottom, env(safe-area-inset-bottom, 0px)) + 18px);overflow:auto}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.sheet-title{font-size:22px;font-weight:800}.close{background:#e5e7eb;padding:8px 12px}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}.history-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-name{font-weight:800;font-size:16px}.history-meta{font-size:12px;color:var(--muted);margin-top:3px}.history-total{font-weight:800;white-space:nowrap}.history-swipe{border:0;border-radius:16px}.history-card{position:relative;z-index:1;transition:transform .22s cubic-bezier(.2,.8,.2,1);touch-action:pan-y}.history-card.swiping{transition:none}.history-buttons{display:grid;grid-template-columns:1fr 1fr 42px;gap:8px;margin-top:11px}.history-buttons button{padding:10px;font-size:13px}.danger{color:var(--danger);background:#fff;border:1px solid #fecaca}.no-history{text-align:center;color:var(--muted);padding:28px 10px}
-    .toast{position:fixed;left:50%;bottom:calc(var(--jaan-safe-bottom, env(safe-area-inset-bottom, 0px)) + 22px);transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 14px;border-radius:13px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1);z-index:80;white-space:nowrap;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 28px)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}.toast-action{padding:0;background:transparent;color:#fff;text-decoration:underline;text-underline-offset:2px;font-size:13px;border-radius:0}
+    @media screen {
+      html:has(.modal.show,.print-choice.show,#photoViewer[open]){overflow:hidden}
+      .sheet{overscroll-behavior:contain;padding-inline:max(14px,var(--jaan-safe-left,0px)) max(14px,var(--jaan-safe-right,0px))}
+    }
+    .toast{position:fixed;left:50%;bottom:calc(var(--jaan-safe-bottom, env(safe-area-inset-bottom, 0px)) + 22px);transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 14px;border-radius:13px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1);z-index:80;overflow-wrap:anywhere;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 28px)}.toast span{min-width:0}.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}.toast-action{flex:none;padding:0;background:transparent;color:#fff;text-decoration:underline;text-underline-offset:2px;font-size:13px;border-radius:0}
     .cloud-btn{position:relative}.cloud-btn::after{content:'';position:absolute;right:4px;bottom:4px;width:9px;height:9px;border:2px solid #fff;border-radius:50%;background:#94a3b8}.cloud-btn.online::after{background:#22c55e}.cloud-btn.syncing::after{background:#f59e0b}.cloud-btn.offline::after,.cloud-btn.error::after{background:#ef4444}.cloud-btn.conflict::after{background:#a855f7}.cloud-status-box{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;margin-bottom:12px}.cloud-status-title{font-weight:800}.cloud-status-detail{font-size:12px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}.cloud-auth-fields{display:grid;gap:9px}.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}.cloud-note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:10px}.cloud-conflict{display:none;background:#faf5ff;border:1px solid #e9d5ff;color:#6b21a8;border-radius:14px;padding:11px;margin:11px 0;font-size:12px}.cloud-conflict.show{display:block}
     @media(max-width:560px){.stats-grid{grid-template-columns:1fr}.customer-stats-grid,.client-leader-grid{grid-template-columns:1fr}.customer-line{grid-template-columns:1fr auto}.headers{display:none}.row{grid-template-columns:1fr 74px 104px}.title{font-size:25px}.top-actions{gap:6px}.top-actions .icon-btn{width:38px;height:38px}.card{padding:10px}.sum{grid-column:1/-1;text-align:left;color:var(--muted);font-size:14px;padding-left:2px}.actions{grid-template-columns:1fr}.invoice-tools{grid-template-columns:1fr}.packing-summary{text-align:left}.sort-controls select{flex:1}.total-value{font-size:27px}.history-buttons{grid-template-columns:1fr 1fr 42px}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
   
     .print-choice{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:flex-end;justify-content:center}
     .print-choice.show{display:flex}
-    .print-sheet{width:min(620px,100%);background:#f6f7f9;border-radius:22px 22px 0 0;padding:16px 14px calc(var(--jaan-safe-bottom, env(safe-area-inset-bottom, 0px)) + 18px)}
-    .print-sheet h3{margin:2px 2px 14px;font-size:22px}
-    .print-paper-row,.print-action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .print-paper-row button{background:#fff;border:1px solid var(--line)}
+    .print-sheet {
+      width:min(620px,100%);
+      max-height:calc(100% - var(--jaan-safe-top,0px) - 8px);
+      overflow:auto;
+      overscroll-behavior:contain;
+      background:var(--bg);
+      border-radius:22px 22px 0 0;
+      padding:16px max(14px,var(--jaan-safe-right,0px))
+              calc(var(--jaan-safe-bottom,0px) + 18px) max(14px,var(--jaan-safe-left,0px));
+    }
+    .print-sheet h3{margin:2px 0 12px;font-size:22px}
+    #paperEstimate{margin:0 0 10px;color:#475569;line-height:1.35;overflow-wrap:anywhere}
+    #retryPaperEstimate{width:100%;margin-bottom:10px}
+    .print-paper-row,.print-action-row {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      align-items:stretch;
+      gap:10px;
+    }
+    .print-sheet button{min-width:0;min-height:46px;padding:10px 8px;overflow-wrap:anywhere}
+    .print-paper-row button{background:#fff;border:1px solid var(--line);color:var(--jaan-blue)}
     .print-paper-row button.active{background:var(--jaan-blue);color:#fff;border-color:var(--jaan-blue)}
     .print-server{margin:12px 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
-    .print-cancel{width:100%;margin-top:10px;background:#e5e7eb;color:#111827}
+    .print-footer{margin-top:10px}
+    .print-cancel{background:#e5e7eb;color:var(--text)}
 
     /* v11.5.0 warehouse */
     .warehouse-sheet{max-height:94vh}.warehouse-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.warehouse-tab{padding:10px 8px;background:#fff;border:1px solid var(--line);color:var(--muted);font-size:13px}.warehouse-tab.active{background:var(--jaan-blue);color:#fff;border-color:var(--jaan-blue)}
@@ -77,6 +100,13 @@
 .wholesale-usd{color:var(--muted,#8a8a8a);font-size:11px;font-weight:400;white-space:nowrap}
 #customerEditModal{z-index:20}
 .product-prices{white-space:normal}
+.product-info,.product-stock-wrap,.location,.variant-line,.movement-main,.stat-value{overflow-wrap:anywhere}
+.product-stock-wrap .product-stock{white-space:normal}
+.variant-line > :last-child{flex:none}
+.warehouse-head-actions{flex:none}
+@media(max-width:360px){.warehouse-head-actions{gap:4px}.warehouse-head-actions .close{padding-inline:8px}.warehouse-sheet .sheet-head .sub{font-size:12px}}
+@media(max-width:420px){.customer-line > input,.customer-line > .suggest-host{min-width:0}}
+
 #warehouseSubcategory{font:inherit;padding:8px;border:1px solid var(--line);border-radius:10px;max-width:100%;box-sizing:border-box;width:100%;margin-bottom:12px}
 #grandTotal{white-space:nowrap}.sale-date-text{position:relative;display:inline-block;cursor:pointer;-webkit-user-select:none;user-select:none}.sale-date-text:active{opacity:.65}.sale-date-input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer;font-size:16px}.debtors-icon{position:relative}.debtors-count{position:absolute;right:-4px;top:-5px;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:var(--jaan-blue);color:#fff;border:2px solid #fff;font-size:9px;line-height:12px;text-align:center;font-weight:800}.history-footer{width:100%;background:transparent;color:var(--muted);font-weight:500;border-radius:10px}.history-footer:active{background:#eef2f7}.history-buttons{align-items:end}.history-save-stack{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px}.history-save-stack .save-pc-inv{width:42px;height:42px}.debt-indicator{width:22px;height:22px;border-radius:8px;background:#eef3f8;color:var(--jaan-blue);display:grid;place-items:center}.debt-indicator svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.finance-card-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.finance-card-actions button{background:var(--jaan-blue);color:#fff;padding:8px 9px;border-radius:11px;font-size:11px}.finance-close{background:var(--jaan-blue)!important;color:#fff!important;padding:9px 12px!important}.range-calendar{display:grid;gap:12px}.range-calendar-head{display:grid;grid-template-columns:42px 1fr 42px;gap:8px;align-items:center}.range-calendar-head button{background:var(--jaan-blue);color:#fff;padding:8px}.range-calendar-title{text-align:center;font-weight:800}.range-week,.range-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.range-week span{text-align:center;font-size:11px;color:var(--muted);font-weight:700}.range-day{aspect-ratio:1;border-radius:10px;padding:0;background:#fff;border:1px solid var(--line);font-size:12px}.range-day.outside{opacity:.35}.range-day.selected{background:var(--jaan-blue);color:#fff;border-color:var(--jaan-blue)}.range-day.in-range{background:#dce7f2;border-color:#dce7f2;color:var(--jaan-blue)}.range-calendar-hint{text-align:center;color:var(--muted);font-size:12px;min-height:16px}.range-calendar-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.range-calendar-actions button{background:var(--jaan-blue);color:#fff;padding:10px}.range-calendar-actions .range-reset{background:#fff;color:var(--jaan-blue);border:1px solid var(--jaan-blue)}
 @media(max-width:560px){#grandTotal{font-size:24px}.top{flex-wrap:wrap;align-items:center;gap:6px}.top-actions{flex-wrap:wrap;flex-shrink:0;gap:4px;max-width:100%}.top-actions .icon-btn{width:34px;height:34px;border-radius:10px}.top-actions .icon-btn svg{width:18px;height:18px}.title{white-space:nowrap;font-size:22px}.history-buttons{align-items:end}}
@@ -118,13 +148,6 @@
         padding-right:max(14px,var(--jaan-safe-right,0px));
         padding-left:max(14px,var(--jaan-safe-left,0px));
       }
-      .warehouse-sheet > .sheet-head {
-        position:sticky;
-        top:var(--jaan-safe-top,0px);
-        z-index:1;
-        padding:6px 0;
-        background:var(--bg);
-      }
       #warehouseModal.show .warehouse-sheet {animation:none}
     }
 </style>
@@ -132,7 +155,7 @@
 </head>
 <body>
   <main class="app">
-    <div class="top"><div><div class="title">Накладная <small style="font-size:10px;color:#6b7280;font-weight:400">v12.1.1</small></div><div class="sub sale-date-text" id="currentDate"><span id="currentDateText"></span><input class="sale-date-input" type="date" id="saleDateInput" aria-label="Дата продажи"></div></div><div class="top-actions">
+    <div class="top"><div><div class="title">Накладная <small style="font-size:10px;color:#6b7280;font-weight:400">v12.1.2</small></div><div class="sub sale-date-text" id="currentDate"><span id="currentDateText"></span><input class="sale-date-input" type="date" id="saleDateInput" aria-label="Дата продажи"></div></div><div class="top-actions">
       <button class="icon-btn cloud-btn" id="cloudBtn" aria-label="Облачная синхронизация" title="Облачная синхронизация"><svg viewBox="0 0 24 24"><path d="M17.5 19H7a5 5 0 1 1 1.1-9.88A7 7 0 0 1 21 12.5 3.5 3.5 0 0 1 17.5 19z"/><path d="M12 12v7M9 15l3-3 3 3"/></svg></button>
       <button class="icon-btn" id="saveBtn" aria-label="Сохранить накладную" title="Сохранить накладную"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg></button>
       <button class="icon-btn" id="printBtn" aria-label="Печать" title="Печать накладной"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg></button>
@@ -244,20 +267,24 @@
     <div class="good-box" id="pickerAvailable"></div><div class="form-actions"><button class="secondary" id="cancelPickerQty">Отмена</button><button class="primary" id="confirmPickerQty">Добавить выбранное</button></div>
   </div></div>
 
-  <div class="print-choice" id="printChoice" aria-hidden="true">
+  <div class="print-choice" id="printChoice" role="dialog" aria-modal="true" aria-labelledby="printChoiceTitle" aria-hidden="true">
     <div class="print-sheet">
-      <h3>Печать накладной</h3>
-      <div id="paperEstimate" role="status" aria-live="polite" style="margin:12px 0;color:#475569"></div><button type="button" class="secondary" id="retryPaperEstimate" hidden>Повторить расчёт</button>
+      <h3 id="printChoiceTitle">Печать накладной</h3>
+      <div id="paperEstimate" role="status" aria-live="polite"></div>
+      <button type="button" class="secondary" id="retryPaperEstimate" hidden>Повторить расчёт</button>
       <div class="print-paper-row">
         <button type="button" id="paperA5">A5</button>
         <button type="button" id="paperA4">A4</button>
       </div>
       <div class="print-server">Сервер: <span id="printServerText"></span></div>
       <div class="print-action-row">
-        <button type="button" class="secondary" id="changePrintServer">Изменить IP / адрес</button>
-        <button type="button" class="primary" id="confirmPrint">Распечатать</button>
+        <button type="button" class="secondary" id="changePrintServer">Изменить адрес</button>
+        <button type="button" class="secondary" id="pairPrinterBtn">Подключить защищённую печать</button>
       </div>
-      <button type="button" class="print-cancel" id="cancelPrint">Отмена</button>
+      <div class="print-action-row print-footer">
+        <button type="button" class="primary" id="confirmPrint">Распечатать</button>
+        <button type="button" class="print-cancel" id="cancelPrint">Отмена</button>
+      </div>
     </div>
   </div>
   <div class="photo-hold-overlay" id="photoHoldOverlay" aria-hidden="true"><img id="photoHoldImage" alt="Фото товара"></div>
@@ -278,7 +305,7 @@
 <script src="catalog-pdf.js"></script>
 <script src="warehouse-excel.js"></script>
 <script>
-const APP_VERSION='12.1.1';
+const APP_VERSION='12.1.2';
 const STORAGE_KEY='invoice-calc-items-v1';
 const NAME_KEY='invoice-calc-customer-v1';
 const HISTORY_KEY='invoice-calc-history-v1';
@@ -464,14 +491,60 @@ function updateEditModeNote(){const el=document.getElementById('editModeNote');i
 function dateText(date=new Date()){return date.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'})}
 function toast(msg,actionLabel='',actionFn=null,duration=2200){const t=document.getElementById('toast');t.innerHTML='';const span=document.createElement('span');span.textContent=msg;t.appendChild(span);if(actionLabel&&actionFn){const b=document.createElement('button');b.className='toast-action';b.textContent=actionLabel;b.addEventListener('click',()=>{clearTimeout(toast.timer);t.classList.remove('show');actionFn()},{once:true});t.appendChild(b)}t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),duration)}
 function closeOpenSwipes(except=null){document.querySelectorAll('.swipe-wrap.swipe-open').forEach(w=>{if(w===except)return;w.classList.remove('swipe-open');const c=w.querySelector('.row,.history-card');if(c)c.style.transform=''})}
-function attachSwipe(wrap,content,onDelete,onPack=null){let sx=0,sy=0,dx=0,startX=0,drag=false,horizontal=false;const width=78;content.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;closeOpenSwipes(wrap);startX=wrap.classList.contains('swipe-open')?-width:0;sx=e.clientX;sy=e.clientY;dx=startX;drag=true;horizontal=false;content.classList.add('swiping');try{content.setPointerCapture(e.pointerId)}catch{}});content.addEventListener('pointermove',e=>{if(!drag)return;const mx=e.clientX-sx,my=e.clientY-sy;if(!horizontal){if(Math.abs(mx)<7&&Math.abs(my)<7)return;if(Math.abs(my)>Math.abs(mx)){drag=false;content.classList.remove('swiping');return}horizontal=true}const maxRight=onPack?width:0;dx=Math.max(-width,Math.min(maxRight,startX+mx));content.style.transform=`translateX(${dx}px)`});const finish=()=>{if(!drag)return;drag=false;content.classList.remove('swiping');if(horizontal&&dx>38&&onPack){wrap.classList.remove('swipe-open');content.style.transform='';horizontal=false;onPack();return}const open=horizontal?dx<-38:false;if(open){wrap.classList.add('swipe-open');content.style.transform=`translateX(-${width}px)`}else{wrap.classList.remove('swipe-open');content.style.transform=''}horizontal=false};content.addEventListener('pointerup',finish);content.addEventListener('pointercancel',finish);wrap.querySelector('.swipe-delete')?.addEventListener('click',e=>{e.stopPropagation();onDelete()})}
+function attachSwipe(wrap,content,onDelete,onPack=null){
+  const width=78;
+  let pointer=null,startX=0,startY=0,offset=0,dx=0,horizontal=false;
+  const setOpen=open=>{
+    wrap.classList.toggle('swipe-open',open);
+    content.style.transform=open?`translateX(-${width}px)`:'';
+  };
+  content.addEventListener('pointerdown',e=>{
+    if(pointer!==null||!e.isPrimary||e.button!==0)return;
+    closeOpenSwipes(wrap);
+    pointer=e.pointerId;
+    startX=e.clientX;startY=e.clientY;
+    offset=wrap.classList.contains('swipe-open')?-width:0;
+    dx=offset;horizontal=false;
+  });
+  content.addEventListener('pointermove',e=>{
+    if(e.pointerId!==pointer)return;
+    const mx=e.clientX-startX,my=e.clientY-startY;
+    if(!horizontal){
+      if(Math.abs(mx)<7&&Math.abs(my)<7)return;
+      if(Math.abs(my)>Math.abs(mx)){pointer=null;return}
+      horizontal=true;
+      content.classList.add('swiping');
+      content.setPointerCapture(e.pointerId);
+    }
+    dx=Math.max(-width,Math.min(onPack?width:0,offset+mx));
+    content.style.transform=`translateX(${dx}px)`;
+  });
+  content.addEventListener('pointerup',e=>{
+    if(e.pointerId!==pointer)return;
+    pointer=null;
+    content.classList.remove('swiping');
+    const pack=horizontal&&dx>38&&onPack;
+    setOpen(horizontal&&dx<-38);
+    if(pack)onPack();
+  });
+  function cancel(e){
+    if(e.pointerId!==pointer)return;
+    pointer=null;
+    content.classList.remove('swiping');
+    setOpen(offset===-width);
+  }
+  content.addEventListener('pointercancel',cancel);
+  content.addEventListener('lostpointercapture',cancel);
+  content.addEventListener('pointerleave',e=>{if(!horizontal)cancel(e)});
+  wrap.querySelector('.swipe-delete')?.addEventListener('click',e=>{e.stopPropagation();onDelete()});
+}
 function togglePackedItem(id){const item=items.find(i=>i.id===id);if(!item)return;item.packed=!item.packed;render();toast(item.packed?'✓ Товар отмечен как собранный':'Отметка сборки снята')}
 function sortInvoiceItems(){const mode=document.getElementById('invoiceSortMode').value,blank=i=>!(String(i.name||'').trim()||String(i.qty||'').trim()||String(i.price||'').trim()),loc=i=>{const p=productById(i.productId);return p?productLocation(p):'яяя'};const cmp={alpha:(a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ru',{sensitivity:'base',numeric:true}),alphaDesc:(a,b)=>String(b.name||'').localeCompare(String(a.name||''),'ru',{sensitivity:'base',numeric:true}),sku:(a,b)=>String(a.sku||a.name||'').localeCompare(String(b.sku||b.name||''),'ru',{sensitivity:'base',numeric:true}),qty:(a,b)=>parseNum(b.qty)-parseNum(a.qty),location:(a,b)=>loc(a).localeCompare(loc(b),'ru',{sensitivity:'base',numeric:true})}[mode]||(()=>0);const filled=items.filter(i=>!blank(i)).sort(cmp),empty=items.filter(blank);items=[...filled,...empty];safeSet(INVOICE_SORT_KEY,mode);render();toast('Позиции отсортированы')}
 function removeInvoiceItem(id,wrap){const index=items.findIndex(i=>i.id===id),removed=index>=0?{...items[index]}:null;if(!removed)return;wrap.classList.add('removing');setTimeout(()=>{items=items.filter(i=>i.id!==id);if(!items.length)items=[{id:uid(),name:'',qty:'',price:'',packed:false}];render();toast('Позиция удалена','Вернуть',()=>{const blankOnly=items.length===1&&!items[0].name&&!items[0].qty&&!items[0].price&&!items[0].productId;if(blankOnly)items=[];if(!items.some(i=>i.id===removed.id))items.splice(Math.min(index,items.length),0,removed);if(!items.length)items=[{id:uid(),name:'',qty:'',price:'',packed:false}];render()},4200)},180)}
 elItems.addEventListener('input',e=>{const row=e.target.closest('.row'); if(!row)return; const item=items.find(i=>i.id===row.dataset.id); if(!item)return; if(e.target.classList.contains('name')){if(item.productId){item.productId='';item.variantId='';item.sku='';item.color=''}item.name=e.target.value;renderItemSuggestions(row,item)} if(e.target.classList.contains('qty'))item.qty=e.target.value; if(e.target.classList.contains('price'))item.price=e.target.value; row.querySelector('.sum').textContent='Сумма: '+money(parseNum(item.qty)*parseNum(item.price)); updateTotal(); save();});
 elItems.addEventListener('focusin',e=>{if(e.target.classList.contains('name')){const row=e.target.closest('.row'),item=items.find(i=>i.id===row?.dataset.id);if(row&&item)renderItemSuggestions(row,item)}});
 elItems.addEventListener('click',e=>{const stock=e.target.closest('.stock-suggestion'),smart=e.target.closest('.smart-suggestion');if(!stock&&!smart)return;const row=e.target.closest('.row'),item=items.find(i=>i.id===row?.dataset.id);if(!row||!item)return;if(stock){pickerTargetItemId=row.dataset.id||null;hideAllItemSuggestions();openPickerQty(stock.dataset.productId);return}const name=smart.dataset.name||'',rawPrice=smart.dataset.price||'',price=rawPrice?String(rawPrice).replace('.',','):'';item.name=name;item.price=price;item.productId='';item.variantId='';item.sku='';item.color='';const nameEl=row.querySelector('.name'),priceEl=row.querySelector('.price');if(nameEl)nameEl.value=name;if(priceEl)priceEl.value=price;row.querySelector('.sum').textContent='Сумма: '+money(parseNum(item.qty)*parseNum(item.price));updateTotal();save();hideAllItemSuggestions();toast('Название и последняя цена подставлены')});
-elName.addEventListener('input',()=>{if(currentCustomerId){const c=customerById(currentCustomerId);if(!c||elName.value.trim()!==c.name)currentCustomerId=''}save()});
+elName.addEventListener('input',()=>{if(currentCustomerId){const c=customerById(currentCustomerId);if(!c||elName.value.trim()!==c.name){currentCustomerId='';clearDraftCustomerDebt()}}save()});
 document.getElementById('addBtn').addEventListener('click',()=>{items.push({id:uid(),name:'',qty:'',price:'',packed:false});render(); setTimeout(()=>elItems.lastElementChild?.querySelector('.name')?.focus(),0)});
 document.getElementById('invoiceSortMode').value=['alpha','alphaDesc','sku','qty','location'].includes(localStorage.getItem(INVOICE_SORT_KEY))?localStorage.getItem(INVOICE_SORT_KEY):'alpha';document.getElementById('sortInvoiceBtn').addEventListener('click',sortInvoiceItems);
 const clearControl=document.getElementById('clearControl');
@@ -505,6 +578,7 @@ function validateInvoiceFinance(inv){
 }
 function validateInvoiceFields(inv){
   if(!validSaleDay(inv.saleDate||localDay(invDate(inv)||new Date())) || (inv.saleDate&&inv.saleDate>localDay(new Date())))return {ok:false,message:'Укажите корректную дату продажи не позже сегодняшней.'};
+  if(!Number.isSafeInteger(cents(totalOf(inv.items))))return {ok:false,message:'Сумма накладной слишком велика. Проверьте количество и цены.'};
   const finance=validateInvoiceFinance(inv);if(!finance.ok)return finance;
   for(let idx=0;idx<(inv.items||[]).length;idx++){
     const i=inv.items[idx],label=`Позиция ${idx+1}`;
@@ -522,7 +596,8 @@ function saveCurrentInvoice(){
   if(!draft.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return false}
   const fields=validateInvoiceFields(draft);if(!fields.ok){alert(fields.message);return false}
   let author;try{author=deviceAuthor()}catch(e){alert(e.message);return false}
-  draft.customerId=resolveCustomerForInvoice(draft);currentCustomerId=draft.customerId||'';
+  const beforeCustomerId=currentCustomerId;
+  draft.customerId=resolveCustomerForInvoice(draft);
   const source=draftSourceInvoiceId?history.find(x=>x.id===draftSourceInvoiceId):null;
   historySaveBusy=true;
   if(source){
@@ -538,7 +613,7 @@ function saveCurrentInvoice(){
     if(updated.stockPosted)postInvoiceStock(updated,updated.dateISO);
     const idx=history.findIndex(x=>x.id===source.id);history[idx]=updated;touchCustomerForInvoice(updated);setDraftSourceInvoice(updated.id,updated.stockPosted,false);
     if(!persistCoreAndDraftState()){
-      history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;persistCoreAndDraftState();alert('Не удалось сохранить изменения накладной. Все изменения отменены.');historySaveBusy=false;return false;
+      history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;currentCustomerId=beforeCustomerId;persistCoreAndDraftState();alert('Не удалось сохранить изменения накладной. Все изменения отменены.');historySaveBusy=false;return false;
     }
     lastSavedFingerprint=invoiceFingerprint(updated);renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();renderMovements();updateDebtors();render();toast(updated.stockPosted?'Изменения сохранены · склад пересчитан':'Изменения накладной сохранены');setTimeout(()=>{historySaveBusy=false},600);return true;
   }
@@ -548,7 +623,7 @@ function saveCurrentInvoice(){
   const beforeHistory=JSON.stringify(history),beforeWarehouse=JSON.stringify(warehouse),beforeMovements=JSON.stringify(movements),beforeCustomers=JSON.stringify(customers),beforeSource=draftSourceInvoiceId,beforeSourceStock=draftSourceStockPosted;
   draft.customerId=resolveCustomerForInvoice(draft,true);currentCustomerId=draft.customerId||'';
   draft.createdBy=author;draft.stockPosted=check.lines.length>0;draft.stockLines=check.lines;if(draft.stockPosted)postInvoiceStock(draft,draft.dateISO);history.unshift(draft);touchCustomerForInvoice(draft);setDraftSourceInvoice(draft.id,draft.stockPosted,false);
-  if(!persistCoreAndDraftState()){history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;persistCoreAndDraftState();alert('Не удалось сохранить накладную и изменения склада. Память приложения Safari может быть заполнена.');historySaveBusy=false;return false}
+  if(!persistCoreAndDraftState()){history=JSON.parse(beforeHistory);warehouse=JSON.parse(beforeWarehouse);movements=JSON.parse(beforeMovements);customers=JSON.parse(beforeCustomers);draftSourceInvoiceId=beforeSource;draftSourceStockPosted=beforeSourceStock;currentCustomerId=beforeCustomerId;persistCoreAndDraftState();alert('Не удалось сохранить накладную и изменения склада. Память приложения Safari может быть заполнена.');historySaveBusy=false;return false}
   renderHistory();renderStats();renderWarehouse();renderWarehouseAnalytics();renderMovements();updateDebtors();render();lastSavedFingerprint=invoiceFingerprint(draft);toast(draft.stockPosted?'Накладная сохранена · склад списан':'Сохранено в историю');setTimeout(()=>{historySaveBusy=false},600);
   return true;
 }
@@ -561,20 +636,31 @@ function normalizePrintServer(raw){
 }
 
 
-function encodePrintBridgePayload(obj){
-  const json=JSON.stringify(obj);
-  const bytes=new TextEncoder().encode(json);
-  // The fragment is never sent to the server, but very large URL fragments are
-  // unreliable in mobile browsers. Normal invoices are only a few KB; reject
-  // pathological/imported payloads before Safari can hang on window.open().
-  if(bytes.length>1500000)throw new Error(obj.format==='jaan-catalogue-pdf-v1'?'Каталог слишком большой для печати. Выберите меньше категорий или отключите фотографии.':'Накладная слишком большая для отправки на локальный сервер.');
-  let binary='';
-  const chunk=0x8000;
-  for(let i=0;i<bytes.length;i+=chunk){
-    const part=bytes.subarray(i,i+chunk);
-    for(let j=0;j<part.length;j++)binary+=String.fromCharCode(part[j]);
-  }
-  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+function isValidPrintServer(raw, base){
+  if(!base||/[\s\\?#]/.test(base))return false;
+  if(/^https?:/i.test(raw)&&!/^https?:\/\/[^/]/i.test(raw))return false;
+  if(raw.includes('://')&&!/^https?:\/\//i.test(raw))return false;
+  try{
+    const address=new URL(base);
+    return !!address.hostname&&!address.username&&!address.password;
+  }catch{return false}
+}
+
+async function postPrintPacket(action, payload, base, timeout, networkError){
+  const packet=await JaanVault.printPacket(action,payload,base);
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeout);
+  try{
+    const response=await fetch(base+action,{
+      method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},
+      body:JSON.stringify(packet),cache:'no-store',signal:controller.signal
+    });
+    const body=await response.json();
+    if(!response.ok||body.ok!==true)throw new Error(body.error||networkError);
+  }catch(e){
+    if(['AbortError','TypeError','SyntaxError'].includes(e.name))throw new Error(networkError);
+    throw e;
+  }finally{clearTimeout(timer)}
 }
 
 
@@ -596,19 +682,10 @@ async function saveInvoiceToServer(inv){
   }
 
   try{
-    const ac=new AbortController();const timer=setTimeout(()=>ac.abort(),12000);
-    const r=await fetch(base+'/save-excel',{
-      method:'POST',
-      headers:{'Content-Type':'application/json; charset=utf-8'},
-      body:JSON.stringify(await JaanVault.printPacket('/save-excel',inv,base)),
-      cache:'no-store',
-      signal:ac.signal
-    }).finally(()=>clearTimeout(timer));
-    const body=await r.json().catch(()=>({}));
-    if(!r.ok || body.ok===false)throw new Error(body.error||('HTTP '+r.status));
+    await postPrintPacket('/save-excel',inv,base,12000,'Проверьте JAAN Print Server и его адрес.');
     return true;
   }catch(e){
-    alert('Накладная сохранена в историю на iPhone, но Excel на ПК сохранить не удалось. Проверьте сервер и адрес.');
+    alert('Excel на ПК сохранить не удалось. '+e.message);
     return false;
   }
 }
@@ -619,6 +696,7 @@ async function sendToPrintServer(inv,paper){
   safeSet(PRINT_SERVER_KEY,base);
 
   const payload={...inv,paper_size:(paper==='A4'?'A4':'A5')};
+  const isCatalogue=payload.format==='jaan-catalogue-pdf-v1';
 
   // GitHub Pages is HTTPS while the local Windows server is HTTP.
   // Safari may block fetch as mixed content, so use the proven top-level
@@ -639,22 +717,11 @@ async function sendToPrintServer(inv,paper){
   }
 
   try{
-    const ac=new AbortController();const timer=setTimeout(()=>ac.abort(),payload.format==='jaan-catalogue-pdf-v1'?120000:20000);
-    const r=await fetch(base+'/print',{
-      method:'POST',
-      headers:{'Content-Type':'application/json; charset=utf-8'},
-      body:JSON.stringify(await JaanVault.printPacket('/print',payload,base)),
-      cache:'no-store',
-      signal:ac.signal
-    }).finally(()=>clearTimeout(timer));
-    if(!r.ok){
-      const body=await r.text();
-      throw new Error(body||('HTTP '+r.status));
-    }
+    await postPrintPacket('/print',payload,base,isCatalogue?120000:20000,'Проверьте JAAN Print Server и адрес в настройках печати.');
     toast('Отправлено на печать: '+payload.paper_size);
     return true;
   }catch(e){
-    alert('Не удалось связаться с компьютером. Проверьте Jaan Print Server и адрес сервера в настройках печати.');
+    alert((isCatalogue?'Не удалось напечатать каталог. ':'Не удалось напечатать накладную. ')+e.message);
     return false;
   }
 }
@@ -666,8 +733,10 @@ let estimateController=null,estimateSequence=0,paperTouched=false;
 let selectedPaper=(localStorage.getItem(PRINT_PAPER_KEY)==='A4'?'A4':'A5');
 
 function refreshPrintChoice(){
-  paperA5.classList.toggle('active',selectedPaper==='A5');
-  paperA4.classList.toggle('active',selectedPaper==='A4');
+  for(const [button,paper] of [[paperA5,'A5'],[paperA4,'A4']]){
+    button.classList.toggle('active',selectedPaper===paper);
+    button.setAttribute('aria-pressed',String(selectedPaper===paper));
+  }
   printServerText.textContent=normalizePrintServer(localStorage.getItem(PRINT_SERVER_KEY)||DEFAULT_PRINT_SERVER);
 }
 
@@ -774,9 +843,13 @@ function openPrintChoice(){
   const inv=currentSnapshot();
   if(!inv.items.length){alert('Добавьте хотя бы одну заполненную позицию.');return}
   const fields=validateInvoiceFields(inv);if(!fields.ok){alert(fields.message);return}
-  paperTouched=false;paperA5.textContent='А5';paperA4.textContent='А4';requestPaperEstimate(inv);refreshPrintChoice();
+  paperTouched=false;
+  selectedPaper=localStorage.getItem(PRINT_PAPER_KEY)==='A4'?'A4':'A5';
+  refreshPrintChoice();
   printChoice.classList.add('show');
   printChoice.setAttribute('aria-hidden','false');
+  printChoice.querySelector('.print-sheet').scrollTop=0;
+  requestPaperEstimate(inv);
 }
 function closePrintChoice(){
   cancelPaperEstimate();
@@ -795,15 +868,17 @@ http://jaan-print.local:8765
 или:
 http://192.168.31.137:8765`,current);
   if(entered===null)return;
-  const base=normalizePrintServer(entered);
-  if(base)safeSet(PRINT_SERVER_KEY,base);
-  paperTouched=false;requestPaperEstimate(currentSnapshot());refreshPrintChoice();
+  const raw=entered.trim(),base=normalizePrintServer(raw);
+  if(!isValidPrintServer(raw,base)){alert('Укажите корректный адрес сервера печати.');return}
+  if(!safeSet(PRINT_SERVER_KEY,base)){alert('Не удалось сохранить адрес сервера.');return}
+  requestPaperEstimate(currentSnapshot());refreshPrintChoice();
 });
 document.getElementById('retryPaperEstimate').addEventListener('click',()=>requestPaperEstimate(currentSnapshot()));
 document.getElementById('cancelPrint').addEventListener('click',closePrintChoice);
 printChoice.addEventListener('click',e=>{if(e.target===printChoice)closePrintChoice()});
 document.getElementById('confirmPrint').addEventListener('click',async()=>{
   const btn=document.getElementById('confirmPrint');
+  if(btn.disabled)return;
   const inv=currentSnapshot();
   const fields=validateInvoiceFields(inv);if(!fields.ok){alert(fields.message);return}
   btn.disabled=true;
@@ -941,12 +1016,19 @@ function touchCustomerForInvoice(inv){const id=safeRefId(inv?.customerId||'');co
 function customerInvoices(id){return history.filter(inv=>inv.customerId===id).sort((a,b)=>(invDate(b)?.getTime()||0)-(invDate(a)?.getTime()||0))}
 function customerStats(id){const rows=customerInvoices(id),now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1),yearStart=new Date(now.getFullYear(),0,1),calc=list=>({count:list.length,sum:list.reduce((a,x)=>a+(invoiceAmount(x)),0)}),month=calc(rows.filter(x=>{const d=invDate(x);return d&&d>=monthStart})),year=calc(rows.filter(x=>{const d=invDate(x);return d&&d>=yearStart})),all=calc(rows),last=rows[0]||null,lastDate=last?invDate(last):null;return {rows,month,year,all,last,lastDate,average:all.count?all.sum/all.count:0,daysAgo:lastDate?Math.max(0,Math.floor((Date.now()-lastDate.getTime())/86400000)):null}}
 function renderCustomerSuggestions(){const box=document.getElementById('customerSuggestions'),q=elName.value.trim().toLowerCase();if(q.length<1){box.classList.remove('show');box.innerHTML='';return}const found=customers.filter(c=>[c.name,c.phone,c.city].join(' ').toLowerCase().includes(q)).sort((a,b)=>String(b.lastUsedAt).localeCompare(String(a.lastUsedAt))).slice(0,5);box.innerHTML=found.map(c=>`<button type="button" class="suggestion-btn customer-suggestion" data-id="${c.id}"><span class="customer-suggestion-line">${customerAvatarHtml(c)}<span>${escapeHtml(c.name)}<small>${escapeHtml([c.city,c.phone].filter(Boolean).join(' · ')||'Сохранённый клиент')}</small></span></span></button>`).join('');box.classList.toggle('show',!!found.length)}
-function useCustomer(id){if(currentCustomerId!==id)draftExtra.debtAmount=0;const c=customerById(id);if(!c)return;currentCustomerId=c.id;updateDebtHint();elName.value=c.name;save();document.getElementById('customerSuggestions').classList.remove('show');toast(c.city?`${c.name} · ${c.city}`:`Клиент: ${c.name}`)}
+function clearDraftCustomerDebt(){
+ if(!draftExtra.debtAmount)return;
+ draftExtra.debtAmount=0;
+ currentComment=debtComment(currentComment,0);
+ updateCommentButton();
+ updateDebtHint();
+}
+function useCustomer(id){const c=customerById(id);if(!c)return;if(currentCustomerId!==id)clearDraftCustomerDebt();currentCustomerId=c.id;updateDebtHint();elName.value=c.name;save();document.getElementById('customerSuggestions').classList.remove('show');toast(c.city?`${c.name} · ${c.city}`:`Клиент: ${c.name}`)}
 function customerActionIcon(type){if(type==='use')return '<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';if(type==='stats')return '<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';return '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/></svg>'}
 function customerSortMetrics(){
  const now=new Date(),period=document.getElementById('customerPeriod').value,start=period==='month'?new Date(now.getFullYear(),now.getMonth(),1):period==='year'?new Date(now.getFullYear(),0,1):null;
  const map=new Map(customers.map(c=>[c.id,{count:0,sum:0,last:0,lastAmount:0}]));
- for(const inv of history){const m=map.get(inv.customerId),d=invDate(inv);if(!m)continue;const amount=Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(inv.items||[]);if(d&&d.getTime()>m.last){m.last=d.getTime();m.lastAmount=amount}if(!start||(d&&d>=start&&d<=now)){m.count++;m.sum+=amount}}
+ for(const inv of history){const m=map.get(inv.customerId),d=invDate(inv);if(!m)continue;const amount=Number.isFinite(Number(inv.total))?Number(inv.total):totalOf(inv.items||[]);if(d&&d.getTime()>m.last){m.last=d.getTime();m.lastAmount=amount}if(!start||(d&&d>=start&&localDay(d)<=localDay(now))){m.count++;m.sum+=amount}}
  return map;
 }
 function compareCustomers(a,b,map){const x=map.get(a.id),y=map.get(b.id),mode=document.getElementById('customerSort').value,alpha=()=>a.name.localeCompare(b.name,'ru',{numeric:true,sensitivity:'base'});if(mode==='alpha')return alpha();if(!!x.last!==!!y.last)return x.last?-1:1;const delta=mode==='frequent'?y.count-x.count:mode==='sum'?y.sum-x.sum:mode==='average'?(y.count?y.sum/y.count:0)-(x.count?x.sum/x.count:0):mode==='oldest'?x.last-y.last:y.last-x.last;return delta||alpha()}
@@ -1004,7 +1086,7 @@ function persistCoreAndDraftState(){
   }
 }
 function setDraftSourceInvoice(id='',stockPosted=false,persist=true){draftSourceInvoiceId=safeRefId(id);draftSourceStockPosted=!!stockPosted;if(persist)persistDraftState()}
-function invoiceFingerprint(inv){return JSON.stringify({saleDate:inv.saleDate||localDay(invDate(inv)||new Date()),discount:inv.discount||0,debtAmount:inv.debtAmount||0,customer:inv.customer||'',customerId:inv.customerId||'',comment:inv.comment||'',items:(inv.items||[]).map(i=>({name:i.name||'',qty:String(i.qty||''),price:String(i.price||''),productId:i.productId||'',variantId:i.variantId||''}))})}
+function invoiceFingerprint(inv){return JSON.stringify({saleDate:inv.saleDate||localDay(invDate(inv)||new Date()),discount:inv.discount||0,debtAmount:inv.debtAmount||0,customer:inv.customer||'',customerId:inv.customerId||'',comment:inv.comment||'',items:(inv.items||[]).map(i=>({name:i.name||'',qty:String(i.qty||''),price:String(i.price||''),productId:i.productId||'',variantId:i.variantId||'',packed:!!i.packed}))})}
 function invoiceStockLines(inv){
   const map=new Map();
   for(const i of inv.items||[]){if(!i.productId||!i.variantId)continue;const qty=Math.max(0,Math.floor(parseNum(i.qty)));if(!qty)continue;const key=i.productId+'|'+i.variantId;const prev=map.get(key)||{productId:i.productId,variantId:i.variantId,sku:i.sku||'',color:i.color||'',qty:0,name:i.name||''};prev.qty+=qty;map.set(key,prev)}
@@ -1048,7 +1130,18 @@ function renderWarehouse(){
 function renderWarehouseAnalytics(){
   const pane=document.getElementById('warehouseAnalyticsPane');if(!pane)return;
   const units=warehouse.reduce((a,p)=>a+productTotal(p),0),costRUB=warehouse.reduce((a,p)=>a+(p.purchaseCurrency==='RUB'?productTotal(p)*parseNum(p.purchasePrice):0),0),costBYN=warehouse.reduce((a,p)=>a+(p.purchaseCurrency==='BYN'?productTotal(p)*parseNum(p.purchasePrice):0),0),wholesale=warehouse.reduce((a,p)=>a+productTotal(p)*parseNum(p.wholesalePrice),0),retail=warehouse.reduce((a,p)=>a+productTotal(p)*parseNum(p.retailPrice),0),low=lowStockRows().length;
-  const now=Date.now(),days30=30*86400000;const recent=movements.filter(m=>{if(m.type!=='sale')return false;const t=new Date(m.dateISO).getTime(),age=now-t;return Number.isFinite(t)&&age>=0&&age<=days30});const sold=recent.reduce((a,m)=>a+m.qty,0);const rank={};for(const m of recent)rank[m.productId]=(rank[m.productId]||0)+m.qty;const top=Object.entries(rank).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const now=new Date(),today=localDay(now);
+  const start=new Date(now.getFullYear(),now.getMonth(),now.getDate()-29),firstDay=localDay(start);
+  const recent=movements.filter(m=>{
+    if(m.type!=='sale')return false;
+    const date=new Date(m.dateISO);
+    if(!Number.isFinite(date.getTime()))return false;
+    const day=localDay(date);
+    return day>=firstDay&&day<=today;
+  });
+  const sold=recent.reduce((a,m)=>a+m.qty,0),rank=new Map();
+  for(const m of recent)rank.set(m.productId,(rank.get(m.productId)||0)+m.qty);
+  const top=[...rank].sort((a,b)=>b[1]-a[1]).slice(0,5);
   const monthStart=new Date();monthStart.setDate(1);monthStart.setHours(0,0,0,0);const month=statsFor(d=>d>=monthStart);
   pane.innerHTML=`<div class="analytics-grid"><div class="stat-card"><div class="stat-label">На складе</div><div class="stat-value">${units}</div><div class="stat-count">единиц</div></div><div class="stat-card"><div class="stat-label">Заканчиваются</div><div class="stat-value">${low}</div><div class="stat-count">вариантов ≤ минимума</div></div><div class="stat-card"><div class="stat-label">Себестоимость остатков</div><div class="stat-value">${costRUB?money(costRUB)+' ₽':costBYN?money(costBYN)+' BYN':'0,00'}</div><div class="stat-count">${costRUB&&costBYN?money(costBYN)+' BYN · валюты не складываются':'по закупочным ценам'}</div></div><div class="stat-card"><div class="stat-label">Оптовая стоимость</div><div class="stat-value">${money(wholesale)}</div><div class="stat-count">BYN по текущим оптовым ценам</div></div><div class="stat-card"><div class="stat-label">Розничная стоимость</div><div class="stat-value">${money(retail)}</div><div class="stat-count">по текущим ценам</div></div><div class="stat-card"><div class="stat-label">Продано за 30 дней</div><div class="stat-value">${sold}</div><div class="stat-count">складских единиц</div></div><div class="stat-card"><div class="stat-label">Накладные за месяц</div><div class="stat-value">${money(month.sum)}</div><div class="stat-count">${month.count} ${pluralInvoice(month.count)}</div></div></div><div class="section-label">Самые продаваемые за 30 дней</div><div class="top-products">${top.length?top.map(([id,q],n)=>{const p=productById(id);return `<div class="top-row"><div><b>${n+1}. ${escapeHtml(p?.name||'Удалённый товар')}</b><div class="muted">${escapeHtml(p?.sku||'')}</div></div><b>${q} шт</b></div>`}).join(''):'<div class="no-history">Продаж складских товаров пока нет.</div>'}</div>`;
 }
@@ -1058,7 +1151,13 @@ function renderMovements(){
   box.innerHTML=list.length?list.map(m=>{const p=productById(m.productId),v=variantById(p,m.variantId),sign=movementSign(m),dt=new Date(m.dateISO);return `<div class="movement-card"><div class="movement-main"><div><div class="movement-title">${escapeHtml(p?.name||'Удалённый товар')} · ${escapeHtml(v?.color||'вариант')}</div><div class="movement-meta">${movementLabel(m.type)} · ${Number.isFinite(dt.getTime())?dt.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Дата не указана'}${m.note?' · '+escapeHtml(m.note):''}</div></div><div class="movement-qty ${sign>0?'plus':'minus'}">${sign>0?'+':'−'}${m.qty}</div></div></div>`}).join(''):'<div class="no-history">Движений пока нет.</div>';
 }
 function switchWarehouseTab(tab){document.querySelectorAll('.warehouse-tab').forEach(b=>b.classList.toggle('active',b.dataset.wtab===tab));document.getElementById('warehouseStockPane').style.display=tab==='stock'?'block':'none';document.getElementById('warehouseAnalyticsPane').style.display=tab==='analytics'?'block':'none';document.getElementById('warehouseMovesPane').style.display=tab==='moves'?'block':'none';if(tab==='analytics')renderWarehouseAnalytics();if(tab==='moves')renderMovements()}
-function openWarehouse(){renderWarehouse();renderWarehouseAnalytics();renderMovements();document.getElementById('warehouseModal').classList.add('show');document.getElementById('warehouseModal').setAttribute('aria-hidden','false')}
+function openWarehouse(){
+  renderWarehouse();renderWarehouseAnalytics();renderMovements();
+  const modal=document.getElementById('warehouseModal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  modal.querySelector('.warehouse-sheet').scrollTop=0;
+}
 function closeWarehouse(){document.getElementById('warehouseModal').classList.remove('show');document.getElementById('warehouseModal').setAttribute('aria-hidden','true')}
 function renderVariantEditor(vars=[]){const box=document.getElementById('variantEditor');const existingIds=new Set((editingProductId?productById(editingProductId)?.variants:[]||[]).map(v=>v.id));box.innerHTML=(vars.length?vars:[{id:uid(),color:'',qty:0}]).map(v=>{const existing=existingIds.has(v.id);return `<div class="variant-edit-row" data-id="${v.id||uid()}"><input class="ve-color" placeholder="Цвет, например красный" value="${escapeHtml(v.color||'')}"><input class="ve-qty" type="number" min="0" inputmode="numeric" placeholder="0" value="${Math.max(0,Math.floor(parseNum(v.qty)))}" ${existing?'disabled title="Остаток меняется через Приход / остаток"':''}><button class="danger ve-delete" title="Удалить">×</button></div>`}).join('')}
 function formatHintNumber(n,decimals=0){
@@ -1289,9 +1388,12 @@ async function cloudBuildState(){
   return {...snapshot,format:'jaan-cloud-state-v1',version:APP_VERSION,lastDeviceName:deviceAuthor().name,savedAt:new Date().toISOString(),warehouse:snapshot.warehouse.map(strip),customers:snapshot.customers.map(strip),priceHints};
 }
 async function cloudGetRemote(metadataOnly=false){const r=await cloudApi(`/rest/v1/jaan_state?select=${metadataOnly?'revision,device_name,updated_at':'revision,state,device_name,updated_at'}&limit=1`,{headers:{Accept:'application/json'}});const rows=await r.json();const remote=rows[0]||null;if(remote&&!metadataOnly){remote.encrypted=remote.state?.format==='jaan-encrypted-state-v1';remote.state=await JaanVault.readCloud(cloudUser().id,remote.state);if(remote.state?.lastDeviceName)remote.device_name=remote.state.lastDeviceName}if(remote?.device_name==='Зашифрованное устройство'){let cached=null;try{cached=JSON.parse(localStorage.getItem('jaan-cloud-last-change-v1')||'null')}catch{}if(cached?.owner===cloudUser().id&&Number(cached.revision)===Number(remote.revision))remote.device_name=cached.name;else return remote}rememberCloudMetadata(remote);return remote}
+function cloudFormIsOpen(){
+  return Boolean(document.querySelector('.modal.show:not(#cloudModal),.print-choice.show,#catalogPreview:not([hidden]),#photoViewer[open]'));
+}
 async function cloudApplyState(state,revision,expectedSeq=cloudChangeSeq){
   if(!state||!Array.isArray(state.warehouse)||!Array.isArray(state.history)||!Array.isArray(state.movements)||!Array.isArray(state.customers))throw new Error('Облачные данные имеют неверный формат');
-  const check=()=>{if(expectedSeq!==cloudChangeSeq||document.querySelector('.modal.show:not(#cloudModal)'))throw new Error('Во время загрузки данные изменились или открыта форма. Закройте форму и повторите синхронизацию.');};
+  const check=()=>{if(expectedSeq!==cloudChangeSeq||cloudFormIsOpen())throw new Error('Во время загрузки данные изменились или открыта форма. Закройте форму и повторите синхронизацию.');};
   check();
   if(draftSourceInvoiceId){const local=history.find(x=>x.id===draftSourceInvoiceId),remote=state.history.find(x=>x.id===draftSourceInvoiceId);if(local&&(!remote||JSON.stringify(local)!==JSON.stringify(remote)))throw new Error('Редактируемая накладная изменилась в облаке. Сохраните или очистите текущий черновик перед загрузкой.')}
   const normalized=normalizeLinkedState(state.warehouse,state.history,state.movements,items,state.customers);
@@ -1350,7 +1452,7 @@ async function cloudPullRemote(ask=true){
   try{const remote=await cloudGetRemote();if(!remote){cloudSetStatus('online','Облако пока пустое','Нажмите «Отправить этот телефон», чтобы загрузить текущую базу.');return}if(ask&&!confirm('Заменить общий склад, клиентов и историю на этом телефоне облачной версией? Незавершённая накладная останется.'))return;cloudSetStatus('syncing','Загрузка из облака…','Получение базы и фотографий.');await cloudApplyState(remote.state,remote.revision,seq);if(!remote.encrypted){cloudSetDirty(true);cloudReceiving=false;await cloudPushLocal(false)}cloudSetStatus('online','Синхронизировано',`${cloudUser().email||'Аккаунт'} · версия ${cloudRevision}`);toast('Облачные данные загружены')}catch(e){console.error('Cloud pull failed',e);cloudSetStatus('error','Не удалось получить данные',e.message)}finally{cloudReceiving=false}
 }
 async function cloudPoll(){
-  if(!cloudReady||!cloudUser()||cloudSaving||cloudReceiving||cloudDirty||cloudConflictState||document.hidden||document.querySelector('.modal.show:not(#cloudModal)'))return;
+  if(!cloudReady||!cloudUser()||cloudSaving||cloudReceiving||cloudDirty||cloudConflictState||document.hidden||cloudFormIsOpen())return;
   cloudReceiving=true;const seq=cloudChangeSeq;
   try{let remote=await cloudGetRemote(true);if(remote&&localStorage.getItem('jaan-legacy-cloud-cleanup-pending')==='1')await cleanupLegacyCloudPhotos();if(remote&&pendingProductPhotoDeletes().length){remote=await cloudGetRemote();if(remote?.state)await flushProductPhotoDeletes(remote.state)}if(remote&&Number(remote.revision)>cloudRevision){remote=await cloudGetRemote();if(!remote)throw new Error('Облачная база недоступна. Повторите синхронизацию.');await cloudApplyState(remote.state,remote.revision,seq);cloudSetStatus('online','Обновлено с другого телефона',`Версия ${cloudRevision}`)}else cloudSetStatus('online','Синхронизировано',`Версия ${cloudRevision}`)}catch(e){cloudSetStatus(navigator.onLine?'error':'offline','Не удалось получить данные',e.message)}finally{cloudReceiving=false}
 }
@@ -1407,34 +1509,56 @@ function debtLedger(id,invoices=history,payments=customerById(id)?.payments||[])
   for(const e of events){if(e.kind==='void')continue;if(e.kind==='debt'){const used=Math.min(credit,e.remaining);e.remaining-=used;credit-=used;debts.push(e)}else{let left=e.amount;e.allocations=[];for(const d of debts){const paid=Math.min(left,d.remaining);if(paid){d.remaining-=paid;left-=paid;e.allocations.push({invoiceId:d.id,amount:paid})}if(!left)break}credit+=left}}
   return {events,debts,balance:debts.reduce((a,d)=>a+d.remaining,0)/100,credit:credit/100};
 }
-function parseCommentAmount(text){const matches=String(text).match(/[+-]?\d+(?:[.,]\d+)?/g)||[];if(matches.length!==1)return null;const n=Number(matches[0].replace(',','.'));return Number.isFinite(n)?n:null}
+const financeAmountPattern='[+-]?(?:\\d{1,3}(?:[ \\u00a0\\u202f]\\d{3})+|\\d+)(?:[.,]\\d+)?';
+function parseCommentAmount(text){
+ const matches=String(text).match(new RegExp(financeAmountPattern,'g'))||[];
+ return matches.length===1?parseStrictNumber(matches[0]):null;
+}
+function financeMarkers(text,labels='Скидка|Долг'){
+ const amount='('+financeAmountPattern+')',label='('+labels+')',rub='\\s*(?:р(?:уб(?:ля|лей|ль)?)?\\.?)?';
+ const suffix=amount+rub+'\\s*(?:·\\s*)?'+label+'(?![а-яё])';
+ const prefix=label+'\\s*(?:[:—]|-\\s+)?\\s*'+amount+rub;
+ return [...String(text).matchAll(new RegExp(suffix+'|'+prefix,'gi'))].map(match=>({
+  index:match.index, length:match[0].length, label:match[2]||match[3], value:parseStrictNumber(match[1]||match[4])
+ }));
+}
 function parseFinanceAction(text,label){
- const source=String(text),finance=/(\d+(?:[.,]\d+)?)\s*(?:р(?:уб(?:ля|лей|ль)?)?\.?)?\s*(?:·\s*)?(Скидка|Долг)/gi;let labeled=null;
- const masked=source.replace(finance,(full,num,kind)=>{if(kind.toLowerCase()===label.toLowerCase())labeled=Number(num.replace(',','.'));return ' '.repeat(full.length)}),numbers=[...masked.matchAll(/[+-]?\d+(?:[.,]\d+)?/g)];
- if(numbers.length===1){const match=numbers[0],n=Number(match[0].replace(',','.'));if(!Number.isFinite(n))return null;const orphan=new RegExp('(^|·)\\s*'+label+'\\s*(?=·|$)','gi'),base=(source.slice(0,match.index)+source.slice(match.index+match[0].length)).replace(orphan,'$1').replace(/\s*·\s*·\s*/g,' · ').replace(/^[\s·]+|[\s·]+$/g,'').trim();return {value:n,base}}
- return numbers.length===0&&Number.isFinite(labeled)?{value:labeled,base:source}:null;
+ const source=String(text),markers=financeMarkers(source);
+ let masked=source;
+ for(const marker of markers){
+  masked=masked.slice(0,marker.index)+' '.repeat(marker.length)+masked.slice(marker.index+marker.length);
+ }
+ const numbers=[...masked.matchAll(new RegExp(financeAmountPattern,'g'))];
+ if(numbers.length===1){
+  const match=numbers[0],value=parseStrictNumber(match[0]);
+  if(value===null)return null;
+  const orphan=new RegExp('(^|·)\\s*'+label+'\\s*(?=·|$)','gi');
+  const base=source.slice(0,match.index)+source.slice(match.index+match[0].length);
+  return {value,base:cleanFinanceComment(base.replace(orphan,'$1'))};
+ }
+ const labeled=markers.filter(marker=>marker.label.toLowerCase()===label.toLowerCase());
+ return numbers.length===0&&labeled.length===1&&labeled[0].value!==null?{value:labeled[0].value,base:source}:null;
+}
+function cleanFinanceComment(text){
+ return text.replace(/\s*·(?:\s*·)+\s*/g,' · ').replace(/^[\s·]+|[\s·]+$/g,'');
 }
 function askAmount(label,initial,max){const text=prompt(label+' (руб.). 0 — убрать',String(initial).replace('.',','));if(text===null)return null;const n=parseStrictNumber(text);if(n===null||n<0||cents(n)>cents(max)||Math.abs(n*100-Math.round(n*100))>1e-6){alert('Введите сумму от 0 до '+money(max)+' с точностью до копеек.');return null}return cents(n)/100}
-function discountComment(text,n){
- const simple=/^(?:скидка\s*)?[+-]?\d+(?:[.,]\d+)?\s*(?:р(?:уб(?:ля|лей|ль)?)?\.?)?(?:\s*·\s*скидка)?$/i;
- let rest=simple.test(text.trim())?'':text.replace(/\d+(?:[.,]\d+)?\s*р\s*·\s*Скидка/gi,'').trim().replace(/^[\s·]+|[\s·]+$/g,'');
- return [rest,n?money(n)+'р · Скидка':''].filter(Boolean).join(' · ');
+function withFinanceMarker(text,label,n){
+ const markers=financeMarkers(text,label);
+ let rest=String(text);
+ for(const marker of markers.reverse())rest=rest.slice(0,marker.index)+rest.slice(marker.index+marker.length);
+ return [cleanFinanceComment(rest),n?money(n)+'р · '+label:''].filter(Boolean).join(' · ');
 }
-function debtComment(text,n){
- const simple=/^(?:долг\s*)?[+-]?\d+(?:[.,]\d+)?\s*(?:р(?:уб(?:ля|лей|ль)?)?\.?)?(?:\s*·\s*долг)?$/i;
- let rest=simple.test(text.trim())?'':text.replace(/\d+(?:[.,]\d+)?\s*р\s*·\s*Долг/gi,'').trim().replace(/^[\s·]+|[\s·]+$/g,'');
- return [rest,n?money(n)+'р · Долг':''].filter(Boolean).join(' · ');
-}
+function discountComment(text,n){return withFinanceMarker(text,'Скидка',n)}
+function debtComment(text,n){return withFinanceMarker(text,'Долг',n)}
 function financeMarkerValues(text,label){
- const num='([+-]?\\d+(?:[.,]\\d+)?)',rub='\\s*(?:р(?:уб(?:ля|лей|ль)?)?\\.?)?',suffix=new RegExp(num+rub+'\\s*(?:·\\s*)?'+label,'gi'),prefix=new RegExp(label+'\\s*[:—-]?\\s*'+num+rub,'gi'),values=[];
- for(const re of [suffix,prefix])for(const match of String(text).matchAll(re)){const value=Number(match[1].replace(',','.'));if(Number.isFinite(value))values.push(value)}
- return values;
+ return financeMarkers(text,label).map(marker=>marker.value).filter(n=>n!==null);
 }
 function syncFinanceFromComment(text=currentComment){
  const discounts=financeMarkerValues(text,'Скидка'),debts=financeMarkerValues(text,'Долг');
  if(discounts.length>1)return {ok:false,message:'В комментарии указано несколько скидок. Оставьте одну сумму скидки.'};
  if(debts.length>1)return {ok:false,message:'В комментарии указано несколько сумм долга. Оставьте одну сумму долга.'};
- const discount=discounts.length?cents(discounts[0])/100:0,debtAmount=debts.length?cents(debts[0])/100:0,snapshot=currentSnapshot(),candidate={...snapshot,discount,debtAmount,total:(cents(snapshot.subtotal)-cents(discount))/100},check=validateInvoiceFinance(candidate);
+ const discount=discounts[0]??0,debtAmount=debts[0]??0,snapshot=currentSnapshot(),candidate={...snapshot,discount,debtAmount,total:(cents(snapshot.subtotal)-cents(discount))/100},check=validateInvoiceFinance(candidate);
  if(!check.ok)return check;draftExtra.discount=discount;draftExtra.debtAmount=debtAmount;return {ok:true};
 }
 function applyDiscount(){const ta=document.getElementById('commentText'),parsed=parseFinanceAction(ta.value,'Скидка');let n=parsed?.value,base=parsed?.base??ta.value;if(!parsed)n=askAmount('Размер скидки',draftExtra.discount,totalOf(items));else if(n<0||cents(n)>cents(totalOf(items))||Math.abs(n*100-cents(n))>1e-6){alert('Некорректная скидка. Она не может быть отрицательной или больше покупки.');return}if(n===null)return;draftExtra.discount=cents(n)/100;ta.value=discountComment(base,n);currentComment=ta.value;updateCommentButton();render();save()}
