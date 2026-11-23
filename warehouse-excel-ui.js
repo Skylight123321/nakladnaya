@@ -26,7 +26,7 @@ async function open(){
  $('excelModal').classList.add('show');$('excelModal').setAttribute('aria-hidden','false');
  historyToken='xl-'+Date.now();try{window.history.pushState({...window.history.state,jaanExcel:historyToken},'')}catch{historyToken=null}
  status('Подготовка склада…');controls();$('closeExcel').focus();
- try{await window.jaanStartupReady;check(t);status('Выгрузите склад или выберите изменённый файл XLSX.');const backup=await backupStore('get');check(t);if(backup)backupFile=makeBackupFile(backup)}catch(e){if(e.name!=='AbortError')status('Не удалось прочитать данные: '+e.message)}finally{if(t===token){busy=false;controls()}}
+ try{await window.jaanStartupReady;check(t);status('Выгрузите склад или выберите изменённый файл XLSX.');const backup=await backupStore('get');check(t);if(backup)backupFile=await makeBackupFile(backup)}catch(e){if(e.name!=='AbortError')status('Не удалось прочитать данные: '+e.message)}finally{if(t===token){busy=false;controls()}}
 }
 function run(action,data){
  return new Promise((resolve,reject)=>{
@@ -75,24 +75,15 @@ function buildReview(){
   if(review.changes.length>100)box.append(line('Ещё изменений: '+(review.changes.length-100)+'.'));
  }catch(e){status('Ошибка проверки: '+e.message)}controls();
 }
-function backupStore(action,data){
- return new Promise((resolve,reject)=>{
-  let db=null,tx=null,done=false;
-  const finish=(error,result)=>{if(done)return;done=true;clearTimeout(timer);db?.close();error?reject(error):resolve(result)};
-  const timer=setTimeout(()=>{try{tx?.abort()}catch{}finish(Error('Хранилище копии не отвечает. Закройте другие окна приложения и повторите.'))},15000);
-  let req;try{req=indexedDB.open('jaan-excel-safety-v1',1)}catch(e){finish(Error('Резервное хранилище недоступно.'));return}
-  req.onupgradeneeded=()=>{req.result.createObjectStore('snapshots')};req.onerror=()=>finish(Error('Не удалось открыть хранилище резервной копии.'));
-  req.onsuccess=()=>{db=req.result;if(done){db.close();return}try{let result=null;tx=db.transaction('snapshots',action==='put'?'readwrite':'readonly');const store=tx.objectStore('snapshots'),r=action==='put'?store.put(data,'latest'):store.get('latest');r.onsuccess=()=>{result=r.result};tx.oncomplete=()=>finish(null,action==='put'?data:result);tx.onabort=tx.onerror=()=>finish(Error('Не удалось сохранить резервную копию. Проверьте свободное место на iPhone.'));}catch(e){finish(Error('Не удалось сохранить резервную копию. Проверьте свободное место на iPhone.'))}};
- });
-}
-function makeBackupFile(data){
+async function backupStore(action,data){try{if(action==='put'){localStorage.setItem('jaan-excel-safety-encrypted-v1',JSON.stringify(data));await JaanVault.flush();return data}return JSON.parse(localStorage.getItem('jaan-excel-safety-encrypted-v1')||'null')}catch{throw Error('Не удалось сохранить зашифрованную резервную копию. Проверьте свободное место на устройстве.')}}
+async function makeBackupFile(data){
  let output=data;
  if(data.photoMode==='current-on-download'){
   const products=new Map(warehouse.map(p=>[p.id,p])),clients=new Map(customers.map(c=>[c.id,c]));
   const withPhoto=(saved,current)=>({...saved,photo:current?.photo||'',localPhotoKey:'',cloudPhotoPath:current?.cloudPhotoPath||'',photoFingerprint:current?.photoFingerprint||''});
   output={...data,warehouse:data.warehouse.map(p=>withPhoto(p,products.get(p.id))),customers:data.customers.map(c=>withPhoto(c,clients.get(c.id)))};delete output.photoMode;
  }
- return new File([JSON.stringify(output)],'JAAN_before_excel_'+String(data.createdAt).replace(/[:.]/g,'-')+'.json',{type:'application/json'});
+ return JaanVault.businessBackupFile(output,'JAAN_encrypted_before_excel_'+String(data.createdAt).replace(/[:.]/g,'-')+'.json');
 }
 async function applyExcel(){
  if(busy||!review||review.errors.length||!review.hasChanges)return;
@@ -112,7 +103,7 @@ async function applyExcel(){
   // A downloaded JSON receives the photographs currently held by the app.
   const stripPhoto=entity=>({...entity,photo:''});
   const storedBackup={...backup,photoMode:'current-on-download',warehouse:backup.warehouse.map(stripPhoto),customers:backup.customers.map(stripPhoto)};
-  await backupStore('put',storedBackup);check(t);backupFile=makeBackupFile(storedBackup);
+  await backupStore('put',storedBackup);check(t);backupFile=await makeBackupFile(storedBackup);
   if(seq!==cloudChangeSeq||state()!==reviewState)throw Error('Данные изменились во время создания копии. Загрузите файл ещё раз.');
   const result=E.materialize(plan,uid,new Date().toISOString()),beforeWarehouse=warehouse,beforeMovements=movements;
   warehouse=result.warehouse;movements=[...result.movements.reverse(),...movements];

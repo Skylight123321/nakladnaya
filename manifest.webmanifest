@@ -1,11 +1,11 @@
 {
-  "name": "JAAN — Накладная и склад",
-  "short_name": "JAAN",
+  "name": "Калькулятор",
+  "short_name": "Калькулятор",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f6f7f9",
-  "theme_color": "#0F2A4A",
-  "description": "Накладные Jaan, складской учёт, остатки, приход, движения, аналитика, печать и Excel.",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "Калькулятор",
   "icons": [
     {
       "src": "icon-192.png",

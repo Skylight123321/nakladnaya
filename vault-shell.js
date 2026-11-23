@@ -1,0 +1,87 @@
+(function(){
+ 'use strict';
+ const C=JaanCrypto,$=id=>document.getElementById(id),store=new JaanVaultStore(e=>{$('vaultStatus').textContent='Не удалось сохранить изменения. Освободите место и повторите вход.';console.error('Encrypted storage write failed',e.name)});
+ let exists=false,busy=false,unlocked=false,locking=null,codeInMemory='',unlockAttempts=0,nextAttempt=0,idleTimer=null,dialogHandler=null,cloudPrompt=null,filePick=false,filePickTimer=null,filePickHidden=false;
+ let current='0',left=null,operator=null,replace=true,lastOperator=null,lastOperand=null,enteredDigits='',pureDigits=true,recoveryHold=false,recoveryTimer=null;
+ const status=s=>$('vaultStatus').textContent=s;
+ function renderCalc(){$('display').textContent=current.replace('.',',');$('display').style.fontSize=current.length>13?'31px':'';document.querySelectorAll('.operator').forEach(b=>b.classList.toggle('selected',b.dataset.key===operator&&replace))}
+ function resetCalc(){current='0';left=null;operator=null;replace=true;lastOperator=null;lastOperand=null;enteredDigits='';pureDigits=true;$('expression').textContent='';renderCalc()}
+ function numberText(n){return Number.isFinite(n)?String(Number(n.toPrecision(12))):'Ошибка'}
+ function calculate(a,b,op){return op==='+'?a+b:op==='−'?a-b:op==='×'?a*b:op==='÷'?a/b:b}
+ function closeDialog(force=false){if(busy&&!force)return;$('vaultDialog').close();$('dialogBody').replaceChildren();dialogHandler=null;if(cloudPrompt){cloudPrompt.reject(Error('Подключение облака отменено'));cloudPrompt=null}}
+ function dialog(title,html,submit,handler){$('dialogTitle').textContent=title;$('dialogBody').innerHTML=html;$('dialogSubmit').textContent=submit;$('dialogSubmit').hidden=false;$('dialogError').textContent='';dialogHandler=handler;if(!$('vaultDialog').open)$('vaultDialog').showModal()}
+ $('closeVaultDialog').onclick=()=>closeDialog();$('vaultDialog').addEventListener('cancel',e=>{if(busy)e.preventDefault();else closeDialog()});
+ $('vaultForm').addEventListener('submit',async e=>{e.preventDefault();if(busy||!dialogHandler)return;busy=true;$('dialogSubmit').disabled=true;try{await dialogHandler()}catch(err){$('dialogError').textContent=err.message||'Не удалось выполнить действие'}finally{busy=false;$('dialogSubmit').disabled=false}});
+ function codeInputs(){return '<label for="newCode">Комбинация цифр</label><input id="newCode" type="password" inputmode="numeric" pattern="[0-9]+" maxlength="128" autocomplete="new-password" required><label for="repeatCode">Повторите комбинацию</label><input id="repeatCode" type="password" inputmode="numeric" maxlength="128" autocomplete="new-password" required><p class="warning" id="shortCodeWarning" hidden>Короткую комбинацию проще подобрать при извлечении базы. Для шифрования лучше 12 случайных цифр или больше.</p>'}
+ function wireCodeWarning(){const input=$('newCode');input.oninput=()=>{$('shortCodeWarning').hidden=input.value.length>=12||!input.value.length}}
+ function readCode(){const code=$('newCode').value;if(!/^\d{1,128}$/.test(code))throw Error('Введите от 1 до 128 цифр');if(code!==$('repeatCode').value)throw Error('Комбинации не совпадают');return code}
+ async function setup(){dialog('Настройка защиты','<p>Существующие товары, клиенты, фотографии и накладные будут перенесены в зашифрованное хранилище на этом устройстве. Вход: комбинация цифр и «=».</p>'+codeInputs(),'Продолжить',async()=>{
+   const code=readCode(),recovery=C.recovery();
+   dialog('Сохраните ключ восстановления','<p>Запишите этот ключ отдельно от телефона и компьютера. Он понадобится, если забудете комбинацию, а также для подключения другого устройства к облачной базе.</p><textarea id="recoveryValue" readonly></textarea><button type="button" id="copyRecovery" class="secondary">Скопировать ключ</button><label class="check"><input id="recoveryAcknowledged" type="checkbox" required><span>Я сохранил ключ отдельно. Понимаю, что без комбинации и ключа восстановить базу невозможно.</span></label>','Включить защиту',async()=>{
+    if(!$('recoveryAcknowledged').checked)throw Error('Сначала сохраните ключ восстановления');await store.create(code,recovery);exists=true;codeInMemory=code;$('vaultDialog').close();$('dialogBody').replaceChildren();await showApp();
+   });$('recoveryValue').value=recovery;$('copyRecovery').onclick=async()=>{try{await navigator.clipboard.writeText(recovery);$('copyRecovery').textContent='Скопировано'}catch{$('recoveryValue').select()}};
+  });wireCodeWarning()}
+ function tick(){clearTimeout(idleTimer);if(unlocked)idleTimer=setTimeout(()=>lock(),5*60*1000)}
+ async function showApp(){if(document.hidden){await store.drain();store.forget();codeInMemory='';resetCalc();return}unlocked=true;status('');resetCalc();const frame=document.createElement('iframe');frame.src='./app.html';frame.title='Накладная';frame.allow='web-share; clipboard-write';$('appHost').replaceChildren(frame);$('appHost').hidden=false;$('calculator').hidden=true;tick()}
+ async function unlock(code,recovery=false){if(busy||unlocked)return;if(Date.now()<nextAttempt)return;busy=true;try{await locking;await store.unlock(code,recovery);codeInMemory=recovery?'':code;unlockAttempts=0;nextAttempt=0;await showApp();if(recovery&&unlocked){$('vaultDialog').close();securitySettings()}}catch(e){unlockAttempts++;nextAttempt=Date.now()+Math.min(30000,Math.max(0,unlockAttempts-3)*1000);if(recovery)throw Error('Не удалось открыть базу. Проверьте ключ восстановления.');if(!/OperationError|DataError/.test(e.name))status(e.message||'Не удалось открыть сохранённые данные')}finally{busy=false}}
+ async function lock(){if(locking)return locking;if(!unlocked)return;if(filePick){filePickHidden=true;$('appHost').hidden=true;$('calculator').hidden=false;resetCalc();return}unlocked=false;clearTimeout(idleTimer);$('appHost').hidden=true;$('calculator').hidden=false;$('vaultDialog').close();$('dialogBody').replaceChildren();if(cloudPrompt){cloudPrompt.reject(Error('Данные заблокированы'));cloudPrompt=null}resetCalc();
+  try{$('appHost').querySelector('iframe')?.contentWindow?.jaanPrepareLock?.()}catch{}
+  $('appHost').replaceChildren();codeInMemory='';
+  locking=(async()=>{try{await store.drain();store.forget();status('')}catch{status('Есть несохранённые изменения. Нажмите «···» и повторите сохранение.')}finally{locking=null}})();return locking;
+ }
+ async function press(k){if(busy)return;if(k==='='&&recoveryHold){recoveryHold=false;return}
+  if(/^\d$/.test(k)){if(replace){if(operator===null){pureDigits=true;enteredDigits=''}current=k;replace=false}else if(current.length<128)current=current==='0'?k:current+k;if(pureDigits)enteredDigits+=k;renderCalc();return}
+  if(k==='AC'){resetCalc();return}
+  if(k==='Backspace'){current=current.length>1?current.slice(0,-1):'0';if(pureDigits)enteredDigits=enteredDigits.slice(0,-1);renderCalc();return}
+  if(k==='='&&pureDigits&&enteredDigits&&exists){const candidate=enteredDigits;enteredDigits='';await unlock(candidate);if(unlocked)return}
+  if(k==='='&&operator){const b=Number(current),a=left;current=numberText(calculate(a,b,operator));$('expression').textContent=numberText(a)+' '+operator+' '+numberText(b)+' =';lastOperator=operator;lastOperand=b;operator=null;left=null;replace=true}
+  else if(k==='='&&lastOperator){current=numberText(calculate(Number(current),lastOperand,lastOperator));replace=true}
+  else if(k==='='){replace=true}
+  else if(['+','−','×','÷'].includes(k)){if(operator&&!replace)current=numberText(calculate(left,Number(current),operator));left=Number(current);operator=k;replace=true;$('expression').textContent=current.replace('.',',')+' '+k;lastOperator=null}
+  else if(k===','||k==='.'){if(replace){current='0.';replace=false}else if(!current.includes('.')&&current!=='Ошибка')current+='.'}
+  else if(k==='±'){if(Number(current))current=current.startsWith('-')?current.slice(1):'-'+current}
+  else if(k==='%'){const value=Number(current);current=numberText(left!==null&&(operator==='+'||operator==='−')?left*value/100:value/100)}
+  pureDigits=false;enteredDigits='';renderCalc();
+ }
+ document.querySelector('.calc-keys').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(b)press(b.dataset.key)});
+ document.addEventListener('keydown',e=>{if(unlocked||$('vaultDialog').open||e.ctrlKey||e.metaKey||e.altKey)return;const map={'Enter':'=','Escape':'AC','Backspace':'Backspace','*':'×','/':'÷','-':'−'};const k=map[e.key]||e.key;if(/^[0-9+%=,.]$/.test(k)||map[e.key]){e.preventDefault();press(k)}});
+ function securitySettings(){dialog('Защита данных','<p>Данные на этом устройстве зашифрованы. При сворачивании приложение блокируется; после 5 минут бездействия — тоже.</p><button type="button" id="changeCode" class="secondary">Изменить комбинацию</button><button type="button" id="encryptedBackup" class="secondary">Скачать зашифрованную копию</button><button type="button" id="lockNow" class="secondary">Заблокировать</button>','Готово',async()=>closeDialog(true));$('changeCode').onclick=()=>{dialog('Новая комбинация',codeInputs()+'<p class="small">Комбинация меняется на этом устройстве. Ключ восстановления остаётся прежним.</p>','Сохранить',async()=>{const code=readCode();await store.changeCode(code);codeInMemory=code;$('vaultDialog').close();$('dialogBody').replaceChildren()});wireCodeWarning()};$('encryptedBackup').onclick=()=>downloadBackup();$('lockNow').onclick=()=>lock()}
+ function recoverDialog(){dialog('Восстановление доступа','<label for="recoveryInput">Ключ восстановления</label><input id="recoveryInput" type="password" autocomplete="off" required>','Открыть',async()=>{const text=$('recoveryInput').value;busy=false;await unlock(text,true)})}
+ const equalButton=document.querySelector('[data-key="="]');equalButton.addEventListener('pointerdown',()=>{if(!exists||busy||unlocked)return;clearTimeout(recoveryTimer);recoveryTimer=setTimeout(()=>{recoveryHold=true;recoverDialog()},1800)});for(const type of ['pointerup','pointercancel','pointerleave'])equalButton.addEventListener(type,()=>clearTimeout(recoveryTimer));
+ $('calculatorMenu').onclick=async()=>{if(store.active&&!unlocked){try{await store.drain();store.forget();status('Сохранено')}catch{status('Не удалось сохранить. Освободите место на устройстве.')}return}if(!exists){setup();return}dialog('Калькулятор','<p>Сложение, вычитание, умножение, деление и проценты.</p><button type="button" id="resetCalculation" class="secondary">Сбросить вычисления</button>','Закрыть',async()=>closeDialog(true));$('resetCalculation').onclick=()=>{resetCalc();closeDialog()}};
+ function saveFile(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
+ async function downloadBackup(){const data=await store.encryptedBackup();saveFile(new Blob([JSON.stringify(data)],{type:'application/json'}),'JAAN_encrypted_backup_'+new Date().toISOString().slice(0,10)+'.json')}
+ function assert(){if(!unlocked||!store.active)throw Error('Данные заблокированы')}
+ const keyringKey='jaan-e2ee-cloud-keys-v1';
+ function keyring(){return JSON.parse(store.storage.getItem(keyringKey)||'{}')}
+ function setRing(ring){store.storage.setItem(keyringKey,JSON.stringify(ring))}
+ async function askCloudSecret(){assert();return new Promise((resolve,reject)=>{cloudPrompt={resolve,reject};dialog('Подключение зашифрованной базы','<p>Введите ключ восстановления с устройства, которое первым включило шифрование этой облачной базы.</p><label for="cloudRecovery">Ключ восстановления</label><input id="cloudRecovery" type="password" autocomplete="off" required>','Подключить',async()=>{const text=$('cloudRecovery').value;cloudPrompt=null;$('vaultDialog').close();$('dialogBody').replaceChildren();resolve(text)})})}
+ async function cloudContext(owner,envelope=null){assert();if(!/^[a-f0-9-]{20,}$/.test(owner))throw Error('Некорректный облачный аккаунт');let ring=keyring(),entry=ring[owner];if(envelope&&entry?.access.id!==envelope.keyAccess?.id){let raw;try{raw=await C.unlock(envelope.keyAccess,codeInMemory)}catch{raw=await C.unlock(envelope.keyAccess,await askCloudSecret(),true)}assert();entry={raw:C.b64(raw),access:envelope.keyAccess,encryptedSeen:true};raw.fill(0);ring=keyring();ring[owner]=entry;setRing(ring)}
+  if(!entry){entry={raw:C.b64(store.raw),access:store.header.access,encryptedSeen:false};ring[owner]=entry;setRing(ring)}
+  return {...entry,key:await C.key(entry.raw)};
+ }
+ async function readCloud(owner,data){assert();if(data?.format!=='jaan-encrypted-state-v1'){const ring=keyring();if(ring[owner]?.encryptedSeen)throw Error('Облако вернуло старый незашифрованный формат. Синхронизация остановлена.');return data}
+  if(data.cryptoVersion!==1||data.keyId!==data.keyAccess?.id)throw Error('Неподдерживаемый зашифрованный формат облака');const ctx=await cloudContext(owner,data),state=await C.open(ctx.key,data.payload,'jaan-cloud-state-v1|'+owner+'|'+data.keyId);assert();return state;
+ }
+ async function sealCloud(owner,data){const ctx=await cloudContext(owner);return {format:'jaan-encrypted-state-v1',cryptoVersion:1,keyId:ctx.access.id,keyAccess:ctx.access,payload:await C.seal(ctx.key,data,'jaan-cloud-state-v1|'+owner+'|'+ctx.access.id)}}
+ async function sealPhoto(owner,path,photo){const ctx=await cloudContext(owner);return {format:'jaan-encrypted-photo-v1',payload:await C.seal(ctx.key,photo,'jaan-cloud-photo-v1|'+owner+'|'+path)}}
+ async function openPhoto(owner,path,data){const ctx=await cloudContext(owner);if(data?.format!=='jaan-encrypted-photo-v1')throw Error('Неверный формат фото');return C.open(ctx.key,data.payload,'jaan-cloud-photo-v1|'+owner+'|'+path)}
+ async function printPacket(action,payload,base){assert();const raw=store.storage.getItem('jaan-printer-pair-key:'+base);if(!raw)throw Error('Подключите этот принтер: в настройках печати введите ключ из окна сервера на ПК.');const id=crypto.randomUUID(),issuedAt=Date.now();return {format:'jaan-print-secure-v1',id,box:await C.seal(await C.key(raw),{id,issuedAt,payload},'jaan-print-v1|'+action+'|'+id)}}
+ window.JaanVault={
+  isUnlocked:()=>unlocked&&store.active,get storage(){assert();return store.storage},lock,settings:securitySettings,tick,
+  photoGet:k=>{assert();return store.photoGet(k)},photoSet:(k,v)=>{assert();return store.photoSet(k,v)},prunePhotos:keep=>{assert();return store.prunePhotos(keep)},flush:()=>store.drain(),backup:downloadBackup,
+  restore:async data=>{const secret=await askCloudSecret();await store.restoreBackup(data,secret,true)},
+  async businessBackupFile(data,name){assert();return new File([JSON.stringify({format:'jaan-encrypted-business-backup-v1',keyAccess:store.header.access,payload:await C.seal(store.cryptoKey,data,'jaan-backup-v1|'+store.header.access.id)})],name,{type:'application/json'})},
+  async readBackup(data){const secret=await askCloudSecret(),raw=await C.unlock(data.keyAccess,secret,true);return C.open(await C.key(raw),data.payload,'jaan-backup-v1|'+data.keyAccess.id)},
+  readCloud,sealCloud,sealPhoto,openPhoto,printPacket,
+  markCloudSaved:owner=>{const ring=keyring();if(ring[owner]){ring[owner].encryptedSeen=true;setRing(ring)}},
+  beginFilePick(){filePick=true;clearTimeout(filePickTimer);filePickTimer=setTimeout(()=>this.endFilePick(),60000)},
+  endFilePick(){clearTimeout(filePickTimer);filePick=false;if(filePickHidden){filePickHidden=false;lock()}},
+  async openPrintBridge(action,payload,base){assert();const preparing=printPacket(action,payload,base),popup=window.open('about:blank','_blank');if(!popup){preparing.catch(()=>{});throw Error('Разрешите всплывающие окна для печати.')}try{const packet=await preparing,data=C.b64(new TextEncoder().encode(JSON.stringify(packet)));if(data.length>2800000)throw Error('Документ слишком большой. Выберите меньше товаров или отключите фото.');popup.location.replace(base+(action==='/save-excel'?'/save-bridge':'/print-bridge')+'#data='+data);return true}catch(e){popup.close();throw e}},
+  async pairPrinter(base,text){assert();const raw=C.unb64(String(text).trim(),32);await C.key(raw);store.storage.setItem('jaan-printer-pair-key:'+base,C.b64(raw));await store.drain()},
+  async reloaded(){await lock()}
+ };
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){if(!unlocked)resetCalc();lock()}});window.addEventListener('pagehide',()=>lock());window.addEventListener('pageshow',e=>{if(e.persisted)lock()});
+ async function init(){try{if(!window.isSecureContext||!crypto?.subtle)throw Error('Для защиты откройте приложение по HTTPS. Локальный HTTP на телефоне не поддерживает шифрование.');exists=await JaanVaultStore.exists();if(!exists)await setup();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});status('')}catch(e){status(e.message)}}
+ init();
+})();
